@@ -39,10 +39,10 @@ export class Factura {
   subtotal: number;
 
   @Column('decimal')
-  total_descuento: number;
+  totalDescuento: number;
 
   @Column('decimal')
-  total_impuesto: number;
+  totalImpuesto: number;
 
   @Column('decimal')
   total: number;
