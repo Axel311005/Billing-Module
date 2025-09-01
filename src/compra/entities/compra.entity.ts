@@ -6,6 +6,7 @@ import { PrimaryGeneratedColumn, ManyToOne, Column, OneToMany, Entity } from "ty
 
 @Entity()
 export class Compra {
+    
     @PrimaryGeneratedColumn()
     idCompra: number;
 

@@ -46,10 +46,22 @@ import { join } from 'path';
       rootPath: join(__dirname,'..', 'public',)
     }) ,
     
-    ClienteModule, ItemModule, BodegaModule, FacturaModule, CompraModule, 
-    CompraLineaModule, FacturaLineaModule, ImpuestoModule, MonedaModule, TipoPagoModule, 
-    ExistenciaBodegaModule, ClasificacionItemModule, AuthModule, UnidadMedidaModule
+    ClienteModule, 
+    ItemModule, 
+    BodegaModule, 
+    FacturaModule, 
+    CompraModule, 
+    CompraLineaModule, 
+    FacturaLineaModule, 
+    ImpuestoModule, 
+    MonedaModule, 
+    TipoPagoModule, 
+    ExistenciaBodegaModule, 
+    ClasificacionItemModule, 
+    AuthModule, 
+    UnidadMedidaModule
   ],
+  
   
 })
 export class AppModule {}

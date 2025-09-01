@@ -18,7 +18,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Taller RESTFul API')
-    .setDescription('Teslo Shop endpoints')
+    .setDescription('Taller endpoints')
     .setVersion('1.0')
     .build();
     

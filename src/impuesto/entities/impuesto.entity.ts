@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Impuesto {
+    
     @PrimaryGeneratedColumn()
     idImpuesto: number;
 
