@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsDecimal } from "class-validator";
 
 export class CreateClienteDto {
-
     @ApiProperty({
         description: 'Nombre del cliente',
         example: 'Empresa ABC S.A.',
@@ -33,12 +32,11 @@ export class CreateClienteDto {
     esExonerado?: boolean;
 
     @ApiProperty({
-        description: 'Porcentaje de exoneración',
+        description: 'Porcentaje de exoneración del cliente',
         example: 0.0,
         nullable: true
     })
     @IsNumber()
-    @IsPositive()
     @IsOptional()
     porcentajeExonerado?: number;
 
@@ -53,7 +51,7 @@ export class CreateClienteDto {
 
     @ApiProperty({
         description: 'Teléfono del cliente',
-        example: '+505 83895193',
+        example: '+595 21 123 456',
         nullable: true
     })
     @IsString()

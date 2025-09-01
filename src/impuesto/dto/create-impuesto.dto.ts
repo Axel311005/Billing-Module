@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive } from "class-validator";
 
 export class CreateImpuestoDto {
     @ApiProperty({
         description: 'Descripción del impuesto',
-        example: 'IVA 15%',
+        example: 'IVA 10%',
         nullable: false,
         minLength: 1
     })

@@ -19,5 +19,5 @@ export class CreateBodegaDto {
     })
     @IsBoolean()
     @IsOptional()
-    activo?: boolean;  
+    activo?: boolean;
 }
