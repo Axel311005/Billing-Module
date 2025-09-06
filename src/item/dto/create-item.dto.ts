@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive, IsDateString } from "class-validator";
 
 export class CreateItemDto {
-    
     @ApiProperty({
         description: 'ID de la clasificación del item',
         example: 1,
@@ -33,7 +32,7 @@ export class CreateItemDto {
 
     @ApiProperty({
         description: 'Descripción del item',
-        example: 'Producto de ejemplo',
+        example: 'Laptop Dell Inspiron 15',
         nullable: false,
         minLength: 1
     })
@@ -53,7 +52,7 @@ export class CreateItemDto {
 
     @ApiProperty({
         description: 'Precio base en moneda local',
-        example: 100000.00,
+        example: 5000000.00,
         nullable: false
     })
     @IsNumber()
@@ -62,7 +61,7 @@ export class CreateItemDto {
 
     @ApiProperty({
         description: 'Precio base en dólares',
-        example: 15.00,
+        example: 714.29,
         nullable: false
     })
     @IsNumber()
@@ -71,7 +70,7 @@ export class CreateItemDto {
 
     @ApiProperty({
         description: 'Precio de adquisición en moneda local',
-        example: 80000.00,
+        example: 4000000.00,
         nullable: false
     })
     @IsNumber()
@@ -80,7 +79,7 @@ export class CreateItemDto {
 
     @ApiProperty({
         description: 'Precio de adquisición en dólares',
-        example: 12.00,
+        example: 571.43,
         nullable: false
     })
     @IsNumber()
@@ -95,6 +94,42 @@ export class CreateItemDto {
     @IsBoolean()
     @IsOptional()
     esCotizable?: boolean;
+
+    @ApiProperty({
+        description: 'Fecha de la última salida del item',
+        example: '2024-01-15T10:30:00Z',
+        nullable: true
+    })
+    @IsDateString()
+    @IsOptional()
+    ultimaSalida?: string;
+
+    @ApiProperty({
+        description: 'Fecha del último ingreso del item',
+        example: '2024-01-10T14:20:00Z',
+        nullable: true
+    })
+    @IsDateString()
+    @IsOptional()
+    ultimoIngreso?: string;
+
+    @ApiProperty({
+        description: 'Usuario que realizó la última modificación',
+        example: 'admin',
+        nullable: true
+    })
+    @IsString()
+    @IsOptional()
+    usuarioUltModif?: string;
+
+    @ApiProperty({
+        description: 'Fecha de la última modificación',
+        example: '2024-01-15T16:45:00Z',
+        nullable: true
+    })
+    @IsDateString()
+    @IsOptional()
+    fechaUltModif?: string;
 
     @ApiProperty({
         description: 'Indica si el item es perecedero',

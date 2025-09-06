@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsPositive } from "class-validator";
 
 export class CreateFacturaLineaDto {
-    
     @ApiProperty({
         description: 'ID de la factura',
         example: 1,
@@ -32,7 +31,7 @@ export class CreateFacturaLineaDto {
 
     @ApiProperty({
         description: 'Precio unitario del item',
-        example: 20000.00,
+        example: 100.00,
         nullable: false
     })
     @IsNumber()
@@ -41,7 +40,7 @@ export class CreateFacturaLineaDto {
 
     @ApiProperty({
         description: 'Total de la línea',
-        example: 100000.00,
+        example: 500.00,
         nullable: false
     })
     @IsNumber()

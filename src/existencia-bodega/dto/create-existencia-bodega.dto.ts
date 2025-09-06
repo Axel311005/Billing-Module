@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsPositive } from "class-validator";
 
 export class CreateExistenciaBodegaDto {
-    
     @ApiProperty({
         description: 'ID del item',
         example: 1,
@@ -22,7 +21,7 @@ export class CreateExistenciaBodegaDto {
     bodegaId: number;
 
     @ApiProperty({
-        description: 'Cantidad disponible del item',
+        description: 'Cantidad disponible del item en la bodega',
         example: 50.0,
         nullable: false
     })
@@ -31,7 +30,7 @@ export class CreateExistenciaBodegaDto {
     cantDisponible: number;
 
     @ApiProperty({
-        description: 'Existencia máxima del item',
+        description: 'Existencia máxima del item en la bodega',
         example: 100.0,
         nullable: false
     })
@@ -40,7 +39,7 @@ export class CreateExistenciaBodegaDto {
     existenciaMaxima: number;
 
     @ApiProperty({
-        description: 'Existencia mínima del item',
+        description: 'Existencia mínima del item en la bodega',
         example: 10.0,
         nullable: false
     })
@@ -49,7 +48,7 @@ export class CreateExistenciaBodegaDto {
     existenciaMinima: number;
 
     @ApiProperty({
-        description: 'Punto de reorden del item',
+        description: 'Punto de reorden del item en la bodega',
         example: 20.0,
         nullable: false
     })

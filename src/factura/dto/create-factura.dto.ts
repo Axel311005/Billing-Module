@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDateString, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive, IsDateString, Min } from "class-validator";
 
 export class CreateFacturaDto {
-
     @ApiProperty({
         description: 'ID del cliente',
         example: 1,
@@ -41,7 +40,7 @@ export class CreateFacturaDto {
 
     @ApiProperty({
         description: 'Código de la factura',
-        example: 'FAC-001-2024',
+        example: 'FAC-2024-001',
         nullable: false,
         minLength: 1
     })
@@ -78,7 +77,7 @@ export class CreateFacturaDto {
 
     @ApiProperty({
         description: 'Subtotal de la factura',
-        example: 100000.00,
+        example: 1000.00,
         nullable: false
     })
     @IsNumber()
@@ -86,26 +85,27 @@ export class CreateFacturaDto {
     subtotal: number;
 
     @ApiProperty({
-        description: 'Total de descuentos',
+        description: 'Total de descuentos de la factura',
         example: 0.00,
         nullable: false
     })
+
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     totalDescuento: number;
 
     @ApiProperty({
-        description: 'Total de impuestos',
-        example: 10000.00,
+        description: 'Total de impuestos de la factura',
+        example: 100.00,
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     totalImpuesto: number;
 
     @ApiProperty({
         description: 'Total de la factura',
-        example: 110000.00,
+        example: 1100.00,
         nullable: false
     })
     @IsNumber()
@@ -113,7 +113,7 @@ export class CreateFacturaDto {
     total: number;
 
     @ApiProperty({
-        description: 'Tipo de cambio usado',
+        description: 'Tipo de cambio usado en la factura',
         example: 7000.00,
         nullable: false
     })
@@ -122,7 +122,7 @@ export class CreateFacturaDto {
     tipoCambioUsado: number;
 
     @ApiProperty({
-        description: 'Comentario de la factura',
+        description: 'Comentario adicional de la factura',
         example: 'Factura por servicios prestados',
         nullable: true
     })

@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive, IsDateString, Min } from "class-validator";
 
 export class CreateCompraDto {
-    
     @ApiProperty({
         description: 'ID de la moneda',
         example: 1,
@@ -32,7 +31,7 @@ export class CreateCompraDto {
 
     @ApiProperty({
         description: 'Código de la compra',
-        example: 'COMP-001-2024',
+        example: 'COMP-2024-001',
         nullable: false,
         minLength: 1
     })
@@ -61,7 +60,7 @@ export class CreateCompraDto {
 
     @ApiProperty({
         description: 'Subtotal de la compra',
-        example: 100000.00,
+        example: 1000.00,
         nullable: false
     })
     @IsNumber()
@@ -69,26 +68,26 @@ export class CreateCompraDto {
     subtotal: number;
 
     @ApiProperty({
-        description: 'Total de impuestos',
-        example: 10000.00,
+        description: 'Total de impuestos de la compra',
+        example: 100.00,
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     totalImpuesto: number;
 
     @ApiProperty({
-        description: 'Total de descuentos',
+        description: 'Total de descuentos de la compra',
         example: 0.00,
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     totalDescuento: number;
 
     @ApiProperty({
         description: 'Total de la compra',
-        example: 110000.00,
+        example: 1100.00,
         nullable: false
     })
     @IsNumber()
@@ -96,7 +95,7 @@ export class CreateCompraDto {
     total: number;
 
     @ApiProperty({
-        description: 'Tipo de cambio usado',
+        description: 'Tipo de cambio usado en la compra',
         example: 7000.00,
         nullable: false
     })
@@ -105,8 +104,8 @@ export class CreateCompraDto {
     tipoCambioUsado: number;
 
     @ApiProperty({
-        description: 'Comentario de la compra',
-        example: 'Compra de materiales',
+        description: 'Comentario adicional de la compra',
+        example: 'Compra de materiales para producción',
         nullable: true
     })
     @IsString()

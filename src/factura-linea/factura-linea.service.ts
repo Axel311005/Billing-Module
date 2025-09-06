@@ -1,26 +1,118 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateFacturaLineaDto } from './dto/create-factura-linea.dto';
 import { UpdateFacturaLineaDto } from './dto/update-factura-linea.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { FacturaLinea } from './entities/factura-linea.entity';
+import { handleDbException } from 'src/common/helpers/db-exception.helper';
+import { PaginationDto } from '../common/dtos/pagination.dto';
+import { Factura } from 'src/factura/entities/factura.entity';
+import { Item } from 'src/item/entities/item.entity';
+import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 
 @Injectable()
 export class FacturaLineaService {
-  create(createFacturaLineaDto: CreateFacturaLineaDto) {
-    return 'This action adds a new facturaLinea';
+
+  private readonly logger = new Logger('FacturaLineaService');
+
+  constructor(
+    @InjectRepository(FacturaLinea)
+    private readonly facturaLineaRepository: Repository<FacturaLinea>,
+    @InjectRepository(Factura)
+    private readonly facturaRepository: Repository<Factura>,
+    @InjectRepository(Item)
+    private readonly itemRepository: Repository<Item>,
+  ){}
+
+  async create(createFacturaLineaDto: CreateFacturaLineaDto) {
+    try {
+      
+      const {facturaId, itemId, ...facturaLinea} = createFacturaLineaDto;
+
+      const factura = await findEntityOrFail(
+        this.facturaRepository, {id_factura: facturaId}, 
+        `La factura no fue encontrada o no existe`
+      );
+      const item = await findEntityOrFail(
+        this.itemRepository, {idItem: itemId}, 
+        `El item no fue encontrado o no existe`
+      );
+
+      const nuevaLinea = this.facturaLineaRepository.create({
+        ...facturaLinea,
+        factura,
+        item,
+      })
+
+      await this.facturaLineaRepository.save(nuevaLinea);
+
+      return await this.facturaLineaRepository.findOne({
+        where : {idFacturaLinea : nuevaLinea.idFacturaLinea},
+        relations: ['factura', 'item']
+      })
+
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      handleDbException(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all facturaLinea`;
+  async findAll(paginationDto: PaginationDto) {
+    const {limit = 10, offset=0} = paginationDto
+    const lineas = await this.facturaLineaRepository.find({
+      take:limit,
+      skip : offset,
+      relations: ['factura', 'item']
+    })
+
+    return lineas;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} facturaLinea`;
+  async findOne(id: number) {
+    const linea = await this.facturaLineaRepository.findOne({
+      where: {idFacturaLinea : id},
+      relations: ['factura', 'item']
+    });
+
+    if (!linea) {
+      throw new NotFoundException(`La línea de factura con id ${id} no fue encontrada`);
+    }
+
+    return linea;
   }
 
-  update(id: number, updateFacturaLineaDto: UpdateFacturaLineaDto) {
-    return `This action updates a #${id} facturaLinea`;
+  async update(id: number, updateFacturaLineaDto: UpdateFacturaLineaDto) {
+    const {facturaId, itemId, ...toUpdate} = updateFacturaLineaDto;
+
+    const factura = await findEntityOrFail(
+      this.facturaRepository, {id_factura: facturaId}, 
+      `La factura no fue encontrada o no existe`
+    );
+    const item = await findEntityOrFail(
+      this.itemRepository, {idItem: itemId}, 
+      `El item no fue encontrado o no existe`
+    );
+
+    const linea = await this.facturaLineaRepository.preload({
+      idFacturaLinea : id, 
+      ...toUpdate,
+      factura,
+      item,
+    })
+
+    if (!linea) {
+      console.log(`La línea de factura con id ${id} no fue encontrada`);
+      throw new NotFoundException(`La línea de factura no fue encontrada`);
+    }
+
+    return this.facturaLineaRepository.save(linea);
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} facturaLinea`;
+  async remove(id: number) {
+    const linea = await this.findOne(id);
+    await this.facturaLineaRepository.remove(linea!);
   }
 }

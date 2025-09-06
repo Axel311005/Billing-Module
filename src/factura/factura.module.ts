@@ -3,9 +3,13 @@ import { FacturaService } from './factura.service';
 import { FacturaController } from './factura.controller';
 import { Factura } from './entities/factura.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
+import { Moneda } from 'src/moneda/entities/moneda.entity';
+import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Factura])],
+  imports: [TypeOrmModule.forFeature([Factura, Cliente, TipoPago, Moneda, Impuesto])],
   controllers: [FacturaController],
   providers: [FacturaService],
 })
