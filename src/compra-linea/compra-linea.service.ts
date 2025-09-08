@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateCompraLineaDto } from './dto/create-compra-linea.dto';
 import { UpdateCompraLineaDto } from './dto/update-compra-linea.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,7 +27,7 @@ export class CompraLineaService {
   async create(createCompraLineaDto: CreateCompraLineaDto) {
     try {
       
-      const {compraId, itemId, ...compraLinea} = createCompraLineaDto;
+      let {compraId, itemId,precioUnitario,cantidad, totalLinea, ...compraLinea} = createCompraLineaDto;
 
       const compra = await findEntityOrFail(
         this.compraRepository, {idCompra: compraId}, 
@@ -38,10 +38,16 @@ export class CompraLineaService {
         `El item no fue encontrado o no existe`
       );
 
+      totalLinea = precioUnitario * cantidad;
+
+
       const nuevaLinea = this.compraLineaRepository.create({
         ...compraLinea,
         compra,
         item,
+        precioUnitario, 
+        cantidad,
+        totalLinea
       })
 
       await this.compraLineaRepository.save(nuevaLinea);
@@ -84,7 +90,7 @@ export class CompraLineaService {
   }
 
   async update(id: number, updateCompraLineaDto: UpdateCompraLineaDto) {
-    const {compraId, itemId, ...toUpdate} = updateCompraLineaDto;
+    let {compraId, itemId, cantidad, precioUnitario, totalLinea, ...toUpdate} = updateCompraLineaDto;
 
     const compra = await findEntityOrFail(
       this.compraRepository, {idCompra: compraId}, 
@@ -95,11 +101,20 @@ export class CompraLineaService {
       `El item no fue encontrado o no existe`
     );
 
+    if(!cantidad && !precioUnitario){
+      throw new BadRequestException('')
+    }
+
+    totalLinea = (cantidad ?? 0) * (precioUnitario ?? 0);
+
     const linea = await this.compraLineaRepository.preload({
       idCompraLinea : id, 
       ...toUpdate,
       compra,
       item,
+      cantidad,
+      precioUnitario,
+      totalLinea
     })
 
     if (!linea) {

@@ -33,7 +33,9 @@ export class FacturaService {
   async create(createFacturaDto: CreateFacturaDto) {
     try {
       
-      const {clienteId, tipoPagoId, monedaId, impuestoId, ...factura} = createFacturaDto;
+      let {
+        clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado ,...factura
+      } = createFacturaDto;
 
       const cliente = await findEntityOrFail(
         this.clienteRepository, {idCliente: clienteId}, 
@@ -52,12 +54,17 @@ export class FacturaService {
         `El impuesto no fue encontrado o no existe`
       );
 
+      tipoCambioUsado = moneda.tipoCambio
+
+
+
       const nuevaFactura = this.facturaRepository.create({
         ...factura,
         cliente,
         tipoPago,
         moneda,
         impuesto,
+        tipoCambioUsado
       })
 
       await this.facturaRepository.save(nuevaFactura);
@@ -100,7 +107,7 @@ export class FacturaService {
   }
 
   async update(id: number, updateFacturaDto: UpdateFacturaDto) {
-    const {clienteId, tipoPagoId, monedaId, impuestoId, ...toUpdate} = updateFacturaDto;
+    let {clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, ...toUpdate} = updateFacturaDto;
 
     const cliente = await findEntityOrFail(
       this.clienteRepository, {idCliente: clienteId}, 
@@ -119,6 +126,8 @@ export class FacturaService {
       `El impuesto no fue encontrado o no existe`
     );
 
+    tipoCambioUsado = moneda.tipoCambio
+
     const factura = await this.facturaRepository.preload({
       id_factura : id, 
       ...toUpdate,
@@ -126,6 +135,7 @@ export class FacturaService {
       tipoPago,
       moneda,
       impuesto,
+      tipoCambioUsado
     })
 
     if (!factura) {

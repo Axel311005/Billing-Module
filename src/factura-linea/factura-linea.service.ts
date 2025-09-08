@@ -27,7 +27,7 @@ export class FacturaLineaService {
   async create(createFacturaLineaDto: CreateFacturaLineaDto) {
     try {
       
-      const {facturaId, itemId, ...facturaLinea} = createFacturaLineaDto;
+      let {facturaId, itemId,cantidad, precioUnitario, totalLinea, ...facturaLinea} = createFacturaLineaDto;
 
       const factura = await findEntityOrFail(
         this.facturaRepository, {id_factura: facturaId}, 
@@ -38,10 +38,15 @@ export class FacturaLineaService {
         `El item no fue encontrado o no existe`
       );
 
+      totalLinea = cantidad * precioUnitario
+
       const nuevaLinea = this.facturaLineaRepository.create({
         ...facturaLinea,
         factura,
         item,
+        cantidad, 
+        precioUnitario, 
+        totalLinea
       })
 
       await this.facturaLineaRepository.save(nuevaLinea);

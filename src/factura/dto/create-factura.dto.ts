@@ -32,7 +32,7 @@ export class CreateFacturaDto {
     @ApiProperty({
         description: 'ID del impuesto',
         example: 1,
-        nullable: false
+        nullable: true
     })
     @IsNumber()
     @IsPositive()
@@ -81,15 +81,23 @@ export class CreateFacturaDto {
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     subtotal: number;
+
+    @ApiProperty({
+        description: 'Porcentaje de descuento aplicable a la factura',
+        example: 10,
+        nullable: true
+    })
+    @IsNumber()
+    @Min(0)
+    porcentajeDescuento: number;
 
     @ApiProperty({
         description: 'Total de descuentos de la factura',
         example: 0.00,
         nullable: false
     })
-
     @IsNumber()
     @Min(0)
     totalDescuento: number;
@@ -109,7 +117,7 @@ export class CreateFacturaDto {
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     total: number;
 
     @ApiProperty({

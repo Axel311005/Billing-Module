@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsPositive } from "class-validator";
+import { IsNumber, IsPositive, Min } from "class-validator";
 
 export class CreateFacturaLineaDto {
     @ApiProperty({
@@ -44,6 +44,6 @@ export class CreateFacturaLineaDto {
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     totalLinea: number;
 }

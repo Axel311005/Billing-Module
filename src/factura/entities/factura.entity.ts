@@ -20,7 +20,9 @@ export class Factura {
   @ManyToOne(() => Moneda, moneda => moneda.facturas)
   moneda: Moneda;
 
-  @ManyToOne(() => Impuesto, impuesto => impuesto.facturas)
+  @ManyToOne(() => Impuesto, impuesto => impuesto.facturas , {
+    nullable : true
+  })
   impuesto: Impuesto;
 
   @Column()
@@ -38,10 +40,17 @@ export class Factura {
   @Column('decimal')
   subtotal: number;
 
+  @Column('decimal', {
+    nullable : true
+  })
+  porcentajeDescuento: number;
+
   @Column('decimal')
   totalDescuento: number;
 
-  @Column('decimal')
+  @Column('decimal' , {
+    nullable : true
+  })
   totalImpuesto: number;
 
   @Column('decimal')

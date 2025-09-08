@@ -23,7 +23,7 @@ export class CreateCompraDto {
     @ApiProperty({
         description: 'ID del impuesto',
         example: 1,
-        nullable: false
+        nullable: true
     })
     @IsNumber()
     @IsPositive()
@@ -64,22 +64,32 @@ export class CreateCompraDto {
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     subtotal: number;
 
     @ApiProperty({
         description: 'Total de impuestos de la compra',
         example: 100.00,
-        nullable: false
+        nullable: true
     })
     @IsNumber()
     @Min(0)
     totalImpuesto: number;
 
+
+    @ApiProperty({
+        description: 'Porcentaje de descuento de la compra',
+        example: 10,
+        nullable: true
+    })
+    @IsNumber()
+    @Min(0)
+    porcentajeDescuento : number
+
     @ApiProperty({
         description: 'Total de descuentos de la compra',
         example: 0.00,
-        nullable: false
+        nullable: true
     })
     @IsNumber()
     @Min(0)
@@ -91,7 +101,7 @@ export class CreateCompraDto {
         nullable: false
     })
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     total: number;
 
     @ApiProperty({

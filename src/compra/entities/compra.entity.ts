@@ -16,7 +16,9 @@ export class Compra {
     @ManyToOne(() => TipoPago, tipoPago => tipoPago.compras)
     tipoPago: TipoPago;
 
-    @ManyToOne(() => Impuesto, impuesto => impuesto.compras)
+    @ManyToOne(() => Impuesto, impuesto => impuesto.compras , {
+        nullable : true
+    })
     impuesto: Impuesto;
 
     @Column()
@@ -31,10 +33,19 @@ export class Compra {
     @Column('decimal')
     subtotal: number;
 
-    @Column('decimal')
+    @Column('decimal' , {
+        nullable : true
+    })
     totalImpuesto: number;
 
-    @Column('decimal')
+    @Column('decimal', {
+        nullable : true
+    })
+    porcentajeDescuento : number
+
+    @Column('decimal', {
+        nullable : true
+    })
     totalDescuento: number;
 
     @Column('decimal')

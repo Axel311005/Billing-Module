@@ -30,7 +30,7 @@ export class CompraService {
   async create(createCompraDto: CreateCompraDto) {
     try {
       
-      const {monedaId, tipoPagoId, impuestoId, ...compra} = createCompraDto;
+      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, ...compra} = createCompraDto;
 
       const moneda = await findEntityOrFail(
         this.monedaRepository, {idMoneda: monedaId}, 
@@ -45,11 +45,14 @@ export class CompraService {
         `El impuesto no fue encontrado o no existe`
       );
 
+      tipoCambioUsado = moneda.tipoCambio;
+
       const nuevaCompra = this.compraRepository.create({
         ...compra,
         moneda,
         tipoPago,
         impuesto,
+        tipoCambioUsado
       })
 
       await this.compraRepository.save(nuevaCompra);
@@ -92,7 +95,7 @@ export class CompraService {
   }
 
   async update(id: number, updateCompraDto: UpdateCompraDto) {
-    const {monedaId, tipoPagoId, impuestoId, ...toUpdate} = updateCompraDto;
+    let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, ...toUpdate} = updateCompraDto;
 
     const moneda = await findEntityOrFail(
       this.monedaRepository, {idMoneda: monedaId}, 
@@ -107,12 +110,15 @@ export class CompraService {
       `El impuesto no fue encontrado o no existe`
     );
 
+    tipoCambioUsado = moneda.tipoCambio;
+
     const compra = await this.compraRepository.preload({
       idCompra : id, 
       ...toUpdate,
       moneda,
       tipoPago,
       impuesto,
+      tipoCambioUsado,
     })
 
     if (!compra) {
