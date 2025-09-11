@@ -10,6 +10,7 @@ import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
 import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
+import { Bodega } from 'src/bodega/entities/bodega.entity';
 
 @Injectable()
 export class CompraService {
@@ -25,12 +26,14 @@ export class CompraService {
     private readonly tipoPagoRepository: Repository<TipoPago>,
     @InjectRepository(Impuesto)
     private readonly impuestoRepository: Repository<Impuesto>,
+    @InjectRepository(Bodega)
+    private readonly bodegaRepository: Repository<Bodega>,
   ){}
 
   async create(createCompraDto: CreateCompraDto) {
     try {
       
-      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, ...compra} = createCompraDto;
+      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, bodegaId, ...compra} = createCompraDto;
 
       const moneda = await findEntityOrFail(
         this.monedaRepository, {idMoneda: monedaId}, 
@@ -44,6 +47,10 @@ export class CompraService {
         this.impuestoRepository, {idImpuesto: impuestoId}, 
         `El impuesto no fue encontrado o no existe`
       );
+      const bodega = await findEntityOrFail(
+        this.bodegaRepository, {idBodega: bodegaId}, 
+        `La bodega no fue encontrado o no existe`
+      );
 
       tipoCambioUsado = moneda.tipoCambio;
 
@@ -52,14 +59,15 @@ export class CompraService {
         moneda,
         tipoPago,
         impuesto,
-        tipoCambioUsado
+        tipoCambioUsado,
+        bodega
       })
 
       await this.compraRepository.save(nuevaCompra);
 
       return await this.compraRepository.findOne({
         where : {idCompra : nuevaCompra.idCompra},
-        relations: ['moneda', 'tipoPago', 'impuesto', 'lineas']
+        relations: ['moneda', 'tipoPago', 'impuesto', 'lineas','bodega']
       })
 
     } catch (error) {
@@ -75,7 +83,7 @@ export class CompraService {
     const compras = await this.compraRepository.find({
       take:limit,
       skip : offset,
-      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas']
+      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega']
     })
 
     return compras;
@@ -84,7 +92,7 @@ export class CompraService {
   async findOne(id: number) {
     const compra = await this.compraRepository.findOne({
       where: {idCompra : id},
-      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas']
+      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega']
     });
 
     if (!compra) {
@@ -95,7 +103,7 @@ export class CompraService {
   }
 
   async update(id: number, updateCompraDto: UpdateCompraDto) {
-    let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, ...toUpdate} = updateCompraDto;
+    let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado,bodegaId, ...toUpdate} = updateCompraDto;
 
     const moneda = await findEntityOrFail(
       this.monedaRepository, {idMoneda: monedaId}, 
@@ -110,6 +118,11 @@ export class CompraService {
       `El impuesto no fue encontrado o no existe`
     );
 
+    const bodega = await findEntityOrFail(
+      this.bodegaRepository, {idBodega: bodegaId}, 
+      `La bodega no fue encontrado o no existe`
+    );
+
     tipoCambioUsado = moneda.tipoCambio;
 
     const compra = await this.compraRepository.preload({
@@ -119,6 +132,7 @@ export class CompraService {
       tipoPago,
       impuesto,
       tipoCambioUsado,
+      bodega
     })
 
     if (!compra) {

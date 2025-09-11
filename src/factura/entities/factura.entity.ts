@@ -1,3 +1,4 @@
+import { Bodega } from "src/bodega/entities/bodega.entity";
 import { Cliente } from "src/cliente/entities/cliente.entity";
 import { FacturaLinea } from "src/factura-linea/entities/factura-linea.entity";
 import { Impuesto } from "src/impuesto/entities/impuesto.entity";
@@ -24,6 +25,11 @@ export class Factura {
     nullable : true
   })
   impuesto: Impuesto;
+
+  @ManyToOne(() => Bodega, bodega => bodega.facturas, {
+    nullable : true
+  })
+  bodega : Bodega
 
   @Column()
   codigoFactura: string;

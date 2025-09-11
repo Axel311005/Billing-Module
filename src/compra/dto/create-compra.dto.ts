@@ -30,6 +30,15 @@ export class CreateCompraDto {
     impuestoId: number;
 
     @ApiProperty({
+        description: 'ID de la bodega',
+        example: 1,
+        nullable: true
+    })
+    @IsNumber()
+    @IsPositive()
+    bodegaId : number;
+
+    @ApiProperty({
         description: 'Código de la compra',
         example: 'COMP-2024-001',
         nullable: false,

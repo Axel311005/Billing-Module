@@ -7,9 +7,10 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
+import { Bodega } from 'src/bodega/entities/bodega.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Factura, Cliente, TipoPago, Moneda, Impuesto])],
+  imports: [TypeOrmModule.forFeature([Factura, Cliente, TipoPago, Moneda, Impuesto, Bodega])],
   controllers: [FacturaController],
   providers: [FacturaService],
 })

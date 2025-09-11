@@ -11,6 +11,7 @@ import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
 import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
+import { Bodega } from 'src/bodega/entities/bodega.entity';
 
 @Injectable()
 export class FacturaService {
@@ -28,13 +29,15 @@ export class FacturaService {
     private readonly monedaRepository: Repository<Moneda>,
     @InjectRepository(Impuesto)
     private readonly impuestoRepository: Repository<Impuesto>,
+    @InjectRepository(Bodega)
+    private readonly bodegaRepository: Repository<Bodega>,
   ){}
 
   async create(createFacturaDto: CreateFacturaDto) {
     try {
       
       let {
-        clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado ,...factura
+        clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, bodegaId,...factura
       } = createFacturaDto;
 
       const cliente = await findEntityOrFail(
@@ -53,6 +56,10 @@ export class FacturaService {
         this.impuestoRepository, {idImpuesto: impuestoId}, 
         `El impuesto no fue encontrado o no existe`
       );
+      const bodega = await findEntityOrFail(
+        this.bodegaRepository, {idBodega: bodegaId}, 
+        `La bodega no fue encontrado o no existe`
+      );
 
       tipoCambioUsado = moneda.tipoCambio
 
@@ -64,14 +71,15 @@ export class FacturaService {
         tipoPago,
         moneda,
         impuesto,
-        tipoCambioUsado
+        tipoCambioUsado,
+        bodega
       })
 
       await this.facturaRepository.save(nuevaFactura);
 
       return await this.facturaRepository.findOne({
         where : {id_factura : nuevaFactura.id_factura},
-        relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas']
+        relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
       })
 
     } catch (error) {
@@ -87,7 +95,7 @@ export class FacturaService {
     const facturas = await this.facturaRepository.find({
       take:limit,
       skip : offset,
-      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas']
+      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
     })
 
     return facturas;
@@ -96,7 +104,7 @@ export class FacturaService {
   async findOne(id: number) {
     const factura = await this.facturaRepository.findOne({
       where: {id_factura : id},
-      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas']
+      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
     });
 
     if (!factura) {
@@ -107,7 +115,7 @@ export class FacturaService {
   }
 
   async update(id: number, updateFacturaDto: UpdateFacturaDto) {
-    let {clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, ...toUpdate} = updateFacturaDto;
+    let {clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, bodegaId,...toUpdate} = updateFacturaDto;
 
     const cliente = await findEntityOrFail(
       this.clienteRepository, {idCliente: clienteId}, 
@@ -126,6 +134,11 @@ export class FacturaService {
       `El impuesto no fue encontrado o no existe`
     );
 
+    const bodega = await findEntityOrFail(
+      this.bodegaRepository, {idBodega: bodegaId}, 
+      `La bodega no fue encontrado o no existe`
+    );
+
     tipoCambioUsado = moneda.tipoCambio
 
     const factura = await this.facturaRepository.preload({
@@ -135,7 +148,8 @@ export class FacturaService {
       tipoPago,
       moneda,
       impuesto,
-      tipoCambioUsado
+      tipoCambioUsado,
+      bodega
     })
 
     if (!factura) {

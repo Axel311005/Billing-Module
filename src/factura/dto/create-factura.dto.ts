@@ -38,6 +38,16 @@ export class CreateFacturaDto {
     @IsPositive()
     impuestoId: number;
 
+
+    @ApiProperty({
+        description: 'ID de la bodega',
+        example: 1,
+        nullable: true
+    })
+    @IsNumber()
+    @IsPositive()
+    bodegaId : number;
+
     @ApiProperty({
         description: 'Código de la factura',
         example: 'FAC-2024-001',

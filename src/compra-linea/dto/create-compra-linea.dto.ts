@@ -46,4 +46,6 @@ export class CreateCompraLineaDto {
     @IsNumber()
     @Min(0)
     totalLinea: number;
+
+    
 }
