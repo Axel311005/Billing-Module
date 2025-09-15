@@ -67,9 +67,6 @@ EXECUTE FUNCTION fn_aumentar_inventario();
 
 
 
-
-
-
 ----------------------------------Funciones para calcular totales de la compra-----------------------------------------------------------------
 
 -- Función para recalcular totales de la compra
@@ -143,3 +140,46 @@ AFTER INSERT OR UPDATE OR DELETE
 ON compra_linea
 FOR EACH ROW
 EXECUTE FUNCTION actualizar_totales_compra();
+
+
+
+-------------------------------------------------Compra Anulada----------------------------------------------------
+
+
+-- Función: anular compra (restar inventario y poner montos en cero)
+CREATE OR REPLACE FUNCTION fn_anular_compra()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_line RECORD;
+BEGIN
+    -- Solo actuar cuando se marca como anulada
+    IF NEW.anulado = true AND OLD.anulado = false THEN
+        -- Restar del inventario cada item de la compra
+        FOR v_line IN
+            SELECT cl."itemIdItem", cl.cantidad, c."bodegaIdBodega"
+            FROM compra_linea cl
+            JOIN compra c ON c."idCompra" = cl."compraIdCompra"
+            WHERE cl."compraIdCompra" = NEW."idCompra"
+        LOOP
+            UPDATE existencia_bodega
+            SET "cantDisponible" = "cantDisponible" - v_line.cantidad
+            WHERE "itemIdItem" = v_line."itemIdItem"
+              AND "bodegaIdBodega" = v_line."bodegaIdBodega";
+        END LOOP;
+
+        -- Poner la fecha de la anulacion
+        NEW."fechaAnulacion" := NOW();
+        NEW.estado := 'ANULADA';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- -- Trigger sobre UPDATE de compra
+-- DROP TRIGGER IF EXISTS trg_anular_compra ON compra;
+
+CREATE TRIGGER trg_anular_compra
+BEFORE UPDATE ON compra
+FOR EACH ROW
+EXECUTE FUNCTION fn_anular_compra();

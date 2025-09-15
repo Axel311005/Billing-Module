@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive, IsDateString, Min } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength, IsNumber, IsPositive, IsDateString, Min, IsDate } from "class-validator";
 
 export class CreateFacturaDto {
     @ApiProperty({
@@ -58,13 +58,7 @@ export class CreateFacturaDto {
     @MinLength(1)
     codigoFactura: string;
 
-    @ApiProperty({
-        description: 'Fecha de la factura',
-        example: '2024-01-15T10:30:00Z',
-        nullable: false
-    })
-    @IsDateString()
-    fecha: string;
+    
 
     @ApiProperty({
         description: 'Indica si la factura está anulada',
@@ -74,6 +68,16 @@ export class CreateFacturaDto {
     @IsBoolean()
     @IsOptional()
     anulada?: boolean;
+
+    // @ApiProperty({
+    //     description: 'Fecha de anulacion de la factura',
+    //     example: '2024-01-15T10:30:00Z',
+    //     nullable: true
+    // })
+    // @IsOptional()
+    // @IsDateString()
+    // fechaAnulacion?: Date;
+
 
     @ApiProperty({
         description: 'Estado de la factura',
@@ -85,14 +89,14 @@ export class CreateFacturaDto {
     @MinLength(1)
     estado: string;
 
-    @ApiProperty({
-        description: 'Subtotal de la factura',
-        example: 1000.00,
-        nullable: false
-    })
-    @IsNumber()
-    @Min(0)
-    subtotal: number;
+    // @ApiProperty({
+    //     description: 'Subtotal de la factura',
+    //     example: 1000.00,
+    //     nullable: false
+    // })
+    // @IsNumber()
+    // @Min(0)
+    // subtotal: number;
 
     @ApiProperty({
         description: 'Porcentaje de descuento aplicable a la factura',
@@ -103,32 +107,32 @@ export class CreateFacturaDto {
     @Min(0)
     porcentajeDescuento: number;
 
-    @ApiProperty({
-        description: 'Total de descuentos de la factura',
-        example: 0.00,
-        nullable: false
-    })
-    @IsNumber()
-    @Min(0)
-    totalDescuento: number;
+    // @ApiProperty({
+    //     description: 'Total de descuentos de la factura',
+    //     example: 0.00,
+    //     nullable: false
+    // })
+    // @IsNumber()
+    // @Min(0)
+    // totalDescuento: number;
 
-    @ApiProperty({
-        description: 'Total de impuestos de la factura',
-        example: 100.00,
-        nullable: false
-    })
-    @IsNumber()
-    @Min(0)
-    totalImpuesto: number;
+    // @ApiProperty({
+    //     description: 'Total de impuestos de la factura',
+    //     example: 100.00,
+    //     nullable: false
+    // })
+    // @IsNumber()
+    // @Min(0)
+    // totalImpuesto: number;
 
-    @ApiProperty({
-        description: 'Total de la factura',
-        example: 1100.00,
-        nullable: false
-    })
-    @IsNumber()
-    @Min(0)
-    total: number;
+    // @ApiProperty({
+    //     description: 'Total de la factura',
+    //     example: 1100.00,
+    //     nullable: false
+    // })
+    // @IsNumber()
+    // @Min(0)
+    // total: number;
 
     @ApiProperty({
         description: 'Tipo de cambio usado en la factura',

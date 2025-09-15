@@ -115,3 +115,44 @@ AFTER INSERT OR UPDATE OR DELETE
 ON factura_linea
 FOR EACH ROW
 EXECUTE FUNCTION actualizar_totales_factura();
+
+
+---------------------------------------Anulacion de facturas--------------------------------------------------
+
+-- Función: anular factura (devolver inventario y poner montos en cero)
+CREATE OR REPLACE FUNCTION fn_anular_factura()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_line RECORD;
+BEGIN
+    -- Solo actuar cuando se marca como anulada
+    IF NEW.anulada = true AND OLD.anulada = false THEN
+        -- Devolver al inventario cada item de la factura
+        FOR v_line IN
+            SELECT fl."itemIdItem", fl.cantidad, f."bodegaIdBodega"
+            FROM factura_linea fl
+            JOIN factura f ON f.id_factura = fl."facturaIdFactura"
+            WHERE fl."facturaIdFactura" = NEW.id_factura
+        LOOP
+            UPDATE existencia_bodega
+            SET "cantDisponible" = "cantDisponible" + v_line.cantidad
+            WHERE "itemIdItem" = v_line."itemIdItem"
+              AND "bodegaIdBodega" = v_line."bodegaIdBodega";
+        END LOOP;
+
+        -- Poner montos en cero
+        NEW."fechaAnulacion" := NOW();
+        NEW.estado := 'ANULADA';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- -- Trigger sobre UPDATE de factura
+-- DROP TRIGGER IF EXISTS trg_anular_factura ON factura;
+
+CREATE TRIGGER trg_anular_factura
+BEFORE UPDATE ON factura
+FOR EACH ROW
+EXECUTE FUNCTION fn_anular_factura();

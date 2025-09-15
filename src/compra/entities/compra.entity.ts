@@ -3,7 +3,7 @@ import { CompraLinea } from "src/compra-linea/entities/compra-linea.entity";
 import { Impuesto } from "src/impuesto/entities/impuesto.entity";
 import { Moneda } from "src/moneda/entities/moneda.entity";
 import { TipoPago } from "src/tipo-pago/entities/tipo-pago.entity";
-import { PrimaryGeneratedColumn, ManyToOne, Column, OneToMany, Entity } from "typeorm";
+import { PrimaryGeneratedColumn, ManyToOne, Column, OneToMany, Entity, CreateDateColumn } from "typeorm";
 
 @Entity()
 export class Compra {
@@ -30,11 +30,17 @@ export class Compra {
     @Column()
     codigoCompra: string;
 
+    @CreateDateColumn({ type: 'timestamp' })
+    fecha: Date;
+
     @Column()
     estado: string;
 
     @Column({ default: false })
     anulado: boolean;
+
+    @Column({nullable : true})
+    fechaAnulacion : Date;
 
     @Column('decimal')
     subtotal: number;

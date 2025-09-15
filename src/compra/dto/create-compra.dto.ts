@@ -68,6 +68,15 @@ export class CreateCompraDto {
     anulado?: boolean;
 
     @ApiProperty({
+        description: 'Fecha de anulacion de la compra',
+        example: '2024-01-15T10:30:00Z',
+        nullable: true
+    })
+    @IsOptional()
+    @IsDateString()
+    fechaAnulacion: Date;
+
+    @ApiProperty({
         description: 'Subtotal de la compra',
         example: 1000.00,
         nullable: false

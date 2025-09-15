@@ -4,7 +4,7 @@ import { FacturaLinea } from "src/factura-linea/entities/factura-linea.entity";
 import { Impuesto } from "src/impuesto/entities/impuesto.entity";
 import { Moneda } from "src/moneda/entities/moneda.entity";
 import { TipoPago } from "src/tipo-pago/entities/tipo-pago.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Factura {
@@ -34,16 +34,20 @@ export class Factura {
   @Column()
   codigoFactura: string;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp'})
   fecha: Date;
 
   @Column({ default: false })
   anulada: boolean;
 
+
+  @Column({nullable : true, default: null})
+  fechaAnulacion : Date;
+
   @Column()
   estado: string;
 
-  @Column('decimal')
+  @Column('decimal', {default : 0})
   subtotal: number;
 
   @Column('decimal', {
@@ -51,15 +55,16 @@ export class Factura {
   })
   porcentajeDescuento: number;
 
-  @Column('decimal')
+  @Column('decimal', {default : 0})
   totalDescuento: number;
 
   @Column('decimal' , {
-    nullable : true
+    nullable : true,
+    default : 0
   })
   totalImpuesto: number;
 
-  @Column('decimal')
+  @Column('decimal', {default : 0})
   total: number;
 
   @Column('decimal')
