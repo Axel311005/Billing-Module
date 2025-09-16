@@ -12,6 +12,8 @@ import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 import { Bodega } from 'src/bodega/entities/bodega.entity';
+import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
+import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
 
 @Injectable()
 export class FacturaService {
@@ -31,13 +33,18 @@ export class FacturaService {
     private readonly impuestoRepository: Repository<Impuesto>,
     @InjectRepository(Bodega)
     private readonly bodegaRepository: Repository<Bodega>,
+    @InjectRepository(Consecutivo)
+    private readonly consecutivoRepo : Repository<Consecutivo>,
+
+    
+    private readonly consecutivoService : ConsecutivoService
   ){}
 
   async create(createFacturaDto: CreateFacturaDto) {
     try {
       
       let {
-        clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, bodegaId,...factura
+        clienteId, tipoPagoId, monedaId, impuestoId, tipoCambioUsado, bodegaId, consecutivoId, codigoFactura,...factura
       } = createFacturaDto;
 
       const cliente = await findEntityOrFail(
@@ -61,9 +68,14 @@ export class FacturaService {
         `La bodega no fue encontrado o no existe`
       );
 
-      tipoCambioUsado = moneda.tipoCambio
+      const consecutivo = await findEntityOrFail(
+        this.consecutivoRepo, {idConsecutivo : consecutivoId},
+        `El consecutivo no fue encontrado o no existe`
+      )
 
+      codigoFactura = await this.consecutivoService.obtenerSiguienteConsecutivo('FACTURA');
 
+      tipoCambioUsado = moneda.tipoCambio;
 
       const nuevaFactura = this.facturaRepository.create({
         ...factura,
@@ -72,14 +84,16 @@ export class FacturaService {
         moneda,
         impuesto,
         tipoCambioUsado,
-        bodega
+        bodega,
+        consecutivo,
+        codigoFactura
       })
 
       await this.facturaRepository.save(nuevaFactura);
 
       return await this.facturaRepository.findOne({
         where : {id_factura : nuevaFactura.id_factura},
-        relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
+        relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega','consecutivo']
       })
 
     } catch (error) {
@@ -95,7 +109,7 @@ export class FacturaService {
     const facturas = await this.facturaRepository.find({
       take:limit,
       skip : offset,
-      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
+      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega','consecutivo']
     })
 
     return facturas;
@@ -104,7 +118,7 @@ export class FacturaService {
   async findOne(id: number) {
     const factura = await this.facturaRepository.findOne({
       where: {id_factura : id},
-      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega']
+      relations: ['cliente', 'tipoPago', 'moneda', 'impuesto', 'lineas', 'bodega','consecutivo']
     });
 
     if (!factura) {
@@ -138,6 +152,7 @@ export class FacturaService {
       this.bodegaRepository, {idBodega: bodegaId}, 
       `La bodega no fue encontrado o no existe`
     );
+    
 
     tipoCambioUsado = moneda.tipoCambio
 

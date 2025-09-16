@@ -1,5 +1,6 @@
 import { Bodega } from "src/bodega/entities/bodega.entity";
 import { Cliente } from "src/cliente/entities/cliente.entity";
+import { Consecutivo } from "src/consecutivo/entities/consecutivo.entity";
 import { FacturaLinea } from "src/factura-linea/entities/factura-linea.entity";
 import { Impuesto } from "src/impuesto/entities/impuesto.entity";
 import { Moneda } from "src/moneda/entities/moneda.entity";
@@ -75,4 +76,7 @@ export class Factura {
 
   @OneToMany(() => FacturaLinea, linea => linea.factura)
   lineas: FacturaLinea[];
+
+  @ManyToOne(() => Consecutivo, (consecutivo) => consecutivo.facturas)
+  consecutivo: Consecutivo;
 }

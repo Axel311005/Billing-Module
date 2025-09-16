@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,8 @@ import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
 import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 import { Bodega } from 'src/bodega/entities/bodega.entity';
+import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
+import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
 
 @Injectable()
 export class CompraService {
@@ -28,12 +30,17 @@ export class CompraService {
     private readonly impuestoRepository: Repository<Impuesto>,
     @InjectRepository(Bodega)
     private readonly bodegaRepository: Repository<Bodega>,
+    @InjectRepository(Consecutivo)
+    private readonly consecutivoRepo : Repository<Consecutivo>,
+
+    
+    private readonly consecutivoService : ConsecutivoService
   ){}
 
   async create(createCompraDto: CreateCompraDto) {
     try {
       
-      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, bodegaId, ...compra} = createCompraDto;
+      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, bodegaId, codigoCompra, consecutivoId,...compra} = createCompraDto;
 
       const moneda = await findEntityOrFail(
         this.monedaRepository, {idMoneda: monedaId}, 
@@ -52,6 +59,14 @@ export class CompraService {
         `La bodega no fue encontrado o no existe`
       );
 
+      const consecutivo = await findEntityOrFail(
+        this.consecutivoRepo, {idConsecutivo : consecutivoId},
+        `El consecutivo no fue encontrado o no existe`
+      )
+
+      codigoCompra = await this.consecutivoService.obtenerSiguienteConsecutivo('COMPRA');
+      
+
       tipoCambioUsado = moneda.tipoCambio;
 
       const nuevaCompra = this.compraRepository.create({
@@ -60,7 +75,9 @@ export class CompraService {
         tipoPago,
         impuesto,
         tipoCambioUsado,
-        bodega
+        bodega,
+        consecutivo,
+        codigoCompra,
       })
 
       await this.compraRepository.save(nuevaCompra);

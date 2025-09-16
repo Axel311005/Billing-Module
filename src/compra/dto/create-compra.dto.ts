@@ -39,6 +39,15 @@ export class CreateCompraDto {
     bodegaId : number;
 
     @ApiProperty({
+        description: 'ID del consecutivo',
+        example: 1,
+        nullable: true
+    })
+    @IsNumber()
+    @IsPositive()
+    consecutivoId : number;
+
+    @ApiProperty({
         description: 'Código de la compra',
         example: 'COMP-2024-001',
         nullable: false,

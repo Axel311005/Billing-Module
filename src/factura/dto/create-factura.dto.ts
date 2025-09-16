@@ -49,6 +49,15 @@ export class CreateFacturaDto {
     bodegaId : number;
 
     @ApiProperty({
+        description: 'ID del consecutivo',
+        example: 1,
+        nullable: true
+    })
+    @IsNumber()
+    @IsPositive()
+    consecutivoId : number;
+
+    @ApiProperty({
         description: 'Código de la factura',
         example: 'FAC-2024-001',
         nullable: false,
