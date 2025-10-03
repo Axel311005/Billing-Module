@@ -12,7 +12,6 @@ import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 
 @Injectable()
 export class ItemService {
-
   private readonly logger = new Logger('ItemService');
 
   constructor(
@@ -22,35 +21,41 @@ export class ItemService {
     private readonly clasificacionItemRepository: Repository<ClasificacionItem>,
     @InjectRepository(UnidadMedida)
     private readonly unidadMedidaRepository: Repository<UnidadMedida>,
-  ){}
+  ) {}
 
   async create(createItemDto: CreateItemDto) {
     try {
-      
-      const {clasificacionId, unidadMedidaId, ...item} = createItemDto;
+      const { clasificacionId, unidadMedidaId, ...item } = createItemDto;
 
       const clasificacion = await findEntityOrFail(
-        this.clasificacionItemRepository, {idClasificacion: clasificacionId}, 
-        `La clasificación no fue encontrada o no existe`
+        this.clasificacionItemRepository,
+        { idClasificacion: clasificacionId },
+        `La clasificación no fue encontrada o no existe`,
       );
       const unidadMedida = await findEntityOrFail(
-        this.unidadMedidaRepository, {idUnidadMedida: unidadMedidaId}, 
-        `La unidad de medida no fue encontrada o no existe`
+        this.unidadMedidaRepository,
+        { idUnidadMedida: unidadMedidaId },
+        `La unidad de medida no fue encontrada o no existe`,
       );
 
       const nuevoItem = this.itemRepository.create({
         ...item,
         clasificacion,
         unidadMedida,
-      })
+      });
 
       await this.itemRepository.save(nuevoItem);
 
       return await this.itemRepository.findOne({
-        where : {idItem : nuevoItem.idItem},
-        relations: ['clasificacion', 'unidadMedida', 'facturaLineas', 'compraLineas', 'existencias']
-      })
-
+        where: { idItem: nuevoItem.idItem },
+        relations: [
+          'clasificacion',
+          'unidadMedida',
+          'facturaLineas',
+          'compraLineas',
+          'existencias',
+        ],
+      });
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -60,20 +65,32 @@ export class ItemService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const {limit = 10, offset=0} = paginationDto
+    const { limit = 10, offset = 0 } = paginationDto;
     const items = await this.itemRepository.find({
-      take:limit,
-      skip : offset,
-      relations: ['clasificacion', 'unidadMedida', 'facturaLineas', 'compraLineas', 'existencias']
-    })
+      take: limit,
+      skip: offset,
+      relations: [
+        'clasificacion',
+        'unidadMedida',
+        'facturaLineas',
+        'compraLineas',
+        'existencias',
+      ],
+    });
 
     return items;
   }
 
   async findOne(id: number) {
     const item = await this.itemRepository.findOne({
-      where: {idItem : id},
-      relations: ['clasificacion', 'unidadMedida', 'facturaLineas', 'compraLineas', 'existencias']
+      where: { idItem: id },
+      relations: [
+        'clasificacion',
+        'unidadMedida',
+        'facturaLineas',
+        'compraLineas',
+        'existencias',
+      ],
     });
 
     if (!item) {
@@ -84,23 +101,25 @@ export class ItemService {
   }
 
   async update(id: number, updateItemDto: UpdateItemDto) {
-    const {clasificacionId, unidadMedidaId, ...toUpdate} = updateItemDto;
+    const { clasificacionId, unidadMedidaId, ...toUpdate } = updateItemDto;
 
     const clasificacion = await findEntityOrFail(
-      this.clasificacionItemRepository, {idClasificacion: clasificacionId}, 
-      `La clasificación no fue encontrada o no existe`
+      this.clasificacionItemRepository,
+      { idClasificacion: clasificacionId },
+      `La clasificación no fue encontrada o no existe`,
     );
     const unidadMedida = await findEntityOrFail(
-      this.unidadMedidaRepository, {idUnidadMedida: unidadMedidaId}, 
-      `La unidad de medida no fue encontrada o no existe`
+      this.unidadMedidaRepository,
+      { idUnidadMedida: unidadMedidaId },
+      `La unidad de medida no fue encontrada o no existe`,
     );
 
     const item = await this.itemRepository.preload({
-      idItem : id, 
+      idItem: id,
       ...toUpdate,
       clasificacion,
       unidadMedida,
-    })
+    });
 
     if (!item) {
       console.log(`El item con id ${id} no fue encontrado`);
@@ -108,7 +127,6 @@ export class ItemService {
     }
 
     return this.itemRepository.save(item);
-
   }
 
   async remove(id: number) {

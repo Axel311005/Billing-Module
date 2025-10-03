@@ -1,20 +1,25 @@
-import { ClasificacionItem } from "src/clasificacion-item/entities/clasificacion-item.entity";
-import { CompraLinea } from "src/compra-linea/entities/compra-linea.entity";
-import { ExistenciaBodega } from "src/existencia-bodega/entities/existencia-bodega.entity";
-import { FacturaLinea } from "src/factura-linea/entities/factura-linea.entity";
-import { UnidadMedida } from "src/unidad-medida/entities/unidad-medida.entity";
-import { PrimaryGeneratedColumn, ManyToOne, Column, OneToMany, Entity } from "typeorm";
+import { ClasificacionItem } from 'src/clasificacion-item/entities/clasificacion-item.entity';
+import { CompraLinea } from 'src/compra-linea/entities/compra-linea.entity';
+import { ExistenciaBodega } from 'src/existencia-bodega/entities/existencia-bodega.entity';
+import { FacturaLinea } from 'src/factura-linea/entities/factura-linea.entity';
+import { UnidadMedida } from 'src/unidad-medida/entities/unidad-medida.entity';
+import {
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  OneToMany,
+  Entity,
+} from 'typeorm';
 
 @Entity()
 export class Item {
-
   @PrimaryGeneratedColumn()
   idItem: number;
 
-  @ManyToOne(() => ClasificacionItem, clasificacion => clasificacion.items)
+  @ManyToOne(() => ClasificacionItem, (clasificacion) => clasificacion.items)
   clasificacion: ClasificacionItem;
 
-  @ManyToOne(() => UnidadMedida, unidad => unidad.items)
+  @ManyToOne(() => UnidadMedida, (unidad) => unidad.items)
   unidadMedida: UnidadMedida;
 
   @Column()
@@ -62,12 +67,12 @@ export class Item {
   @Column({ default: true })
   activo: boolean;
 
-  @OneToMany(() => FacturaLinea, linea => linea.item)
+  @OneToMany(() => FacturaLinea, (linea) => linea.item)
   facturaLineas: FacturaLinea[];
 
-  @OneToMany(() => CompraLinea, linea => linea.item)
+  @OneToMany(() => CompraLinea, (linea) => linea.item)
   compraLineas: CompraLinea[];
 
-  @OneToMany(() => ExistenciaBodega, existencia => existencia.item)
+  @OneToMany(() => ExistenciaBodega, (existencia) => existencia.item)
   existencias: ExistenciaBodega[];
 }
