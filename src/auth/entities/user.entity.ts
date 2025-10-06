@@ -1,9 +1,13 @@
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -35,6 +39,20 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  @OneToOne(() => Empleado, (empleado) => empleado.user, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn({ name: 'empleado_id' })
+  empleado?: Empleado;
+
+  @OneToOne(() => Cliente, (cliente) => cliente.user, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn({ name: 'cliente_id' })
+  cliente?: Cliente;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

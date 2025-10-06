@@ -1,5 +1,12 @@
+import { User } from 'src/auth/entities/user.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Cliente {
@@ -38,4 +45,7 @@ export class Cliente {
 
   @OneToMany(() => Factura, (factura) => factura.cliente)
   facturas: Factura;
+
+  @OneToOne(() => User, (user) => user.cliente)
+  user: User;
 }
