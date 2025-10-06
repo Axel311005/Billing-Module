@@ -20,6 +20,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConsecutivoModule } from './consecutivo/consecutivo.module';
+import { EmpleadoModule } from './empleado/empleado.module';
 
 @Module({
   imports: [
@@ -60,7 +61,7 @@ import { ConsecutivoModule } from './consecutivo/consecutivo.module';
     ExistenciaBodegaModule, 
     ClasificacionItemModule, 
     AuthModule, 
-    UnidadMedidaModule, ConsecutivoModule
+    UnidadMedidaModule, ConsecutivoModule, EmpleadoModule
   ],
   
   

@@ -3,7 +3,7 @@ import { IsEmail, IsString, Matches, MaxLength, MinLength } from "class-validato
 
 
 
-export class CreateUserDto {
+export class LoginUserDto {
 
     @ApiProperty()
     @IsString()
@@ -21,8 +21,5 @@ export class CreateUserDto {
     password: string;
 
 
-    @ApiProperty()
-    @IsString() 
-    @MinLength(1)
-    fullName: string;
+    
 }

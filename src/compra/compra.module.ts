@@ -9,14 +9,22 @@ import { TipoPago } from 'src/tipo-pago/entities/tipo-pago.entity';
 import { Bodega } from 'src/bodega/entities/bodega.entity';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { ConsecutivoModule } from 'src/consecutivo/consecutivo.module';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Compra, Moneda, TipoPago, Impuesto, Bodega, Consecutivo]),
-    ConsecutivoModule
+    TypeOrmModule.forFeature([
+      Compra,
+      Moneda,
+      TipoPago,
+      Impuesto,
+      Bodega,
+      Consecutivo,
+      Empleado,
+    ]),
+    ConsecutivoModule,
   ],
   controllers: [CompraController],
   providers: [CompraService],
-  
 })
 export class CompraModule {}

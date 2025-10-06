@@ -1,46 +1,48 @@
-import { PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert, BeforeUpdate, Entity } from "typeorm";
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
-    
-    @PrimaryGeneratedColumn()
-    id:string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column('text', {
-        unique: true
-    })
-    email: string;
+  @Column('text', {
+    unique: true,
+  })
+  email: string;
 
-    @Column('text', {
-        select : false
-    })
-    password: string;
+  @Column('text', {
+    select: false,
+  })
+  password: string;
 
-    @Column('text')
-    fullName: string;
+  @Column('text')
+  fullName: string;
 
-    @Column('text')
-    userName: string;
+  @Column('bool', {
+    default: true,
+  })
+  isActive: boolean;
 
-    @Column('bool',{
-        default : true
-    })
-    activo: boolean;
+  @Column('text', {
+    array: true,
+    default: ['user'],
+  })
+  roles: string[];
 
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.email = this.email.toLowerCase().trim();
+  }
 
-    @Column('text', {
-        array: true,
-        default: ['user']
-    })
-    roles: string[];
-
-    @BeforeInsert()
-    checkFieldsBeforeInsert() {
-        this.email = this.email.toLowerCase().trim();
-    }
-
-    @BeforeUpdate()
-    checkFieldsBeforeUpdate() {
-        this.email = this.email.toLowerCase().trim();
-    }
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.email = this.email.toLowerCase().trim();
+  }
 }
