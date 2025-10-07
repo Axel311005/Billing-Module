@@ -10,37 +10,45 @@ import {
 
 @Entity()
 export class Cliente {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_cliente' })
   idCliente: number;
 
-  @Column()
+  @Column({ name: 'nombre' })
   nombre: string;
 
-  @Column()
+  @Column({ name: 'ruc' })
   ruc: string;
 
-  @Column({ default: false })
+  @Column({ name: 'es_exonerado', default: false })
   esExonerado: boolean;
 
-  @Column('decimal', { nullable: true, default: 0 })
+  @Column('decimal', {
+    name: 'porcentaje_exonerado',
+    nullable: true,
+    default: 0,
+  })
   porcentajeExonerado: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'direccion', nullable: true })
   direccion: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'telefono', nullable: true })
   telefono: string;
 
-  @Column({ default: true })
+  @Column({ name: 'activo', default: true })
   activo: boolean;
 
-  @Column({ nullable: true })
+  @Column({ name: 'notas', nullable: true })
   notas: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'fecha_ult_modif', type: 'timestamp', nullable: true })
   fechaUltModif: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fechaCreacion: Date;
 
   @OneToMany(() => Factura, (factura) => factura.cliente)

@@ -130,6 +130,18 @@ export class FacturaController {
   })
   @ApiQuery({ name: 'clienteNombre', required: false })
   @ApiQuery({ name: 'bodegaNombre', required: false })
+  @ApiQuery({ name: 'empleadoNombre', required: false })
+  @ApiQuery({ name: 'id_cliente', required: false })
+  @ApiQuery({ name: 'id_bodega', required: false })
+  @ApiQuery({ name: 'id_empleado', required: false })
+  @ApiQuery({ name: 'codigo_factura', required: false })
+  @ApiQuery({ name: 'codigoLike', required: false })
+  @ApiQuery({ name: 'estado', required: false })
+  @ApiQuery({ name: 'anulada', required: false })
+  @ApiQuery({ name: 'dateFrom', required: false })
+  @ApiQuery({ name: 'dateTo', required: false })
+  @ApiQuery({ name: 'minTotal', required: false })
+  @ApiQuery({ name: 'maxTotal', required: false })
   // ... agrega los ApiQuery que necesites para documentar los filtros
   advancedSearch(@Query() facturaFilterDto: FacturaFilterDto) {
     return this.facturaService.advancedSearch(facturaFilterDto);

@@ -17,7 +17,7 @@ import {
 
 @Entity()
 export class Factura {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_factura' })
   id_factura: number;
 
   @ManyToOne(() => Cliente, (cliente) => cliente.facturas)
@@ -39,45 +39,47 @@ export class Factura {
   })
   bodega: Bodega;
 
-  @Column()
+  @Column({ name: 'codigo_factura' })
   codigoFactura: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'fecha', type: 'timestamp' })
   fecha: Date;
 
-  @Column({ default: false })
+  @Column({ name: 'anulada', default: false })
   anulada: boolean;
 
-  @Column({ nullable: true, default: null })
+  @Column({ name: 'fecha_anulacion', nullable: true, default: null })
   fechaAnulacion: Date;
 
-  @Column()
+  @Column({ name: 'estado' })
   estado: string;
 
-  @Column('decimal', { default: 0 })
+  @Column('decimal', { name: 'subtotal', default: 0 })
   subtotal: number;
 
   @Column('decimal', {
+    name: 'porcentaje_descuento',
     nullable: true,
   })
   porcentajeDescuento: number;
 
-  @Column('decimal', { default: 0 })
+  @Column('decimal', { name: 'total_descuento', default: 0 })
   totalDescuento: number;
 
   @Column('decimal', {
+    name: 'total_impuesto',
     nullable: true,
     default: 0,
   })
   totalImpuesto: number;
 
-  @Column('decimal', { default: 0 })
+  @Column('decimal', { name: 'total', default: 0 })
   total: number;
 
-  @Column('decimal')
+  @Column('decimal', { name: 'tipo_cambio_usado' })
   tipoCambioUsado: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'comentario', nullable: true })
   comentario: string;
 
   @OneToMany(() => FacturaLinea, (linea) => linea.factura)

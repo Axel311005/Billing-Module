@@ -1,21 +1,24 @@
-import { Item } from "src/item/entities/item.entity";
-import { PrimaryGeneratedColumn, Column, OneToMany, Entity } from "typeorm";
+import { Item } from 'src/item/entities/item.entity';
+import { PrimaryGeneratedColumn, Column, OneToMany, Entity } from 'typeorm';
 
 @Entity()
 export class ClasificacionItem {
-    
-    @PrimaryGeneratedColumn()
-    idClasificacion: number;
+  @PrimaryGeneratedColumn({ name: 'id_clasificacion' })
+  idClasificacion: number;
 
-    @Column()
-    descripcion: string;
+  @Column({ name: 'descripcion' })
+  descripcion: string;
 
-    @Column({ default: true })
-    activo: boolean;
+  @Column({ name: 'activo', default: true })
+  activo: boolean;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    fechaCreacion: Date;
+  @Column({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  fechaCreacion: Date;
 
-    @OneToMany(() => Item, item => item.clasificacion)
-    items: Item[];
+  @OneToMany(() => Item, (item) => item.clasificacion)
+  items: Item[];
 }

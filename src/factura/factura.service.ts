@@ -274,16 +274,18 @@ export class FacturaService {
 
     const qb = this.facturaRepository
       .createQueryBuilder('f')
-      .leftJoinAndSelect('f.cliente', 'c')
-      .leftJoinAndSelect('f.bodega', 'b')
-      .leftJoinAndSelect('f.empleado', 'e');
+      .leftJoinAndSelect('f.clienteIdCliente', 'c')
+      .leftJoinAndSelect('f.bodegaIdBodega', 'b')
+      .leftJoinAndSelect('f.empleadoIdEmpleado', 'e');
 
     if (clienteNombre)
       qb.andWhere('c.nombre ILIKE :cNom', { cNom: `%${clienteNombre}%` });
     if (bodegaNombre)
-      qb.andWhere('b.nombre ILIKE :bNom', { bNom: `%${bodegaNombre}%` });
+      qb.andWhere('b.descripcion ILIKE :bNom', { bNom: `%${bodegaNombre}%` });
     if (empleadoNombre)
-      qb.andWhere('e.nombre ILIKE :eNom', { eNom: `%${empleadoNombre}%` });
+      qb.andWhere('e.primerNombre ILIKE :eNom', {
+        eNom: `%${empleadoNombre}%`,
+      });
 
     if (id_cliente) qb.andWhere('c.id = :idc', { idc: id_cliente });
     if (id_bodega) qb.andWhere('b.id = :idb', { idb: id_bodega });

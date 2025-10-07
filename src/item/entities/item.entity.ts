@@ -9,62 +9,69 @@ import {
   Column,
   OneToMany,
   Entity,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
 export class Item {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_item' })
   idItem: number;
 
   @ManyToOne(() => ClasificacionItem, (clasificacion) => clasificacion.items)
+  @JoinColumn({ name: 'id_clasificacion' })
   clasificacion: ClasificacionItem;
 
   @ManyToOne(() => UnidadMedida, (unidad) => unidad.items)
+  @JoinColumn({ name: 'id_unidad_medida' })
   unidadMedida: UnidadMedida;
 
-  @Column()
+  @Column({ name: 'codigo_item' })
   codigoItem: string;
 
-  @Column()
+  @Column({ name: 'descripcion' })
   descripcion: string;
 
-  @Column()
+  @Column({ name: 'tipo' })
   tipo: string;
 
-  @Column('decimal')
+  @Column('decimal', { name: 'precio_base_local' })
   precioBaseLocal: number;
 
-  @Column('decimal')
+  @Column('decimal', { name: 'precio_base_dolar' })
   precioBaseDolar: number;
 
-  @Column('decimal')
+  @Column('decimal', { name: 'precio_adquisicion_local' })
   precioAdquisicionLocal: number;
 
-  @Column('decimal')
+  @Column('decimal', { name: 'precio_adquisicion_dolar' })
   precioAdquisicionDolar: number;
 
-  @Column({ default: false })
+  @Column({ name: 'es_cotizable', default: false })
   esCotizable: boolean;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'ultima_salida', type: 'timestamp', nullable: true })
   ultimaSalida: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'ultimo_ingreso', type: 'timestamp', nullable: true })
   ultimoIngreso: Date;
 
-  @Column({ nullable: true })
+  @Column({ name: 'usuario_ult_modif', nullable: true })
   usuarioUltModif: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'fecha_ult_modif', type: 'timestamp', nullable: true })
   fechaUltModif: Date;
 
-  @Column({ default: false })
+  @Column({ name: 'perecedero', default: false })
   perecedero: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fechaCreacion: Date;
 
-  @Column({ default: true })
+  @Column({ name: 'activo', default: true })
   activo: boolean;
 
   @OneToMany(() => FacturaLinea, (linea) => linea.item)

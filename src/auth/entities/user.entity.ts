@@ -13,28 +13,32 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
   @Column('text', {
+    name: 'email',
     unique: true,
   })
   email: string;
 
   @Column('text', {
+    name: 'password',
     select: false,
   })
   password: string;
 
-  @Column('text')
+  @Column('text', { name: 'full_name' })
   fullName: string;
 
   @Column('bool', {
+    name: 'is_active',
     default: true,
   })
   isActive: boolean;
 
   @Column('text', {
+    name: 'roles',
     array: true,
     default: ['user'],
   })

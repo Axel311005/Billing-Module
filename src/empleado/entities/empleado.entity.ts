@@ -11,40 +11,53 @@ import {
 
 @Entity()
 export class Empleado {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_empleado' })
   idEmpleado: number;
 
-  @Column()
+  @Column({ name: 'primer_nombre' })
   primerNombre: string;
 
-  @Column()
+  @Column({ name: 'primer_apellido' })
   primerApellido: string;
 
-  @Column()
+  @Column({ name: 'cedula' })
   cedula: string;
 
-  @Column()
+  @Column({ name: 'telefono' })
   telefono: string;
 
-  @Column()
+  @Column({ name: 'correo' })
   correo: string;
 
-  @Column()
+  @Column({ name: 'direccion' })
   direccion: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'fecha_contratacion',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fecha_contratacion: Date;
 
-  @Column()
+  @Column({ name: 'cargo' })
   cargo: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fecha_creacion: Date;
 
-  @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'fecha_ult_modificacion',
+    type: 'timestamp',
+    nullable: true,
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   fecha_ult_modificacion: Date;
 
-  @Column()
+  @Column({ name: 'activo' })
   activo: boolean;
 
   @OneToMany(() => Factura, (factura) => factura.empleado)
