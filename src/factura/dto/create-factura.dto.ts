@@ -42,7 +42,7 @@ export class CreateFacturaDto {
   @IsPositive()
   consecutivoId: number;
 
-  @ApiProperty({ description: 'ID del empleado responsable', example: 5 })
+  @ApiProperty({ description: 'ID del empleado responsable', example: 1 })
   @IsInt()
   @IsPositive()
   empleadoId: number;
