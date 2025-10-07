@@ -122,7 +122,7 @@ export class FacturaController {
     return this.facturaService.remove(id);
   }
 
-  @Get('advanced-search')
+  @Get(':search')
   @ApiOperation({ summary: 'Busqueda avanzada de una factura' })
   @ApiResponse({
     status: 201,
