@@ -121,20 +121,17 @@ export class FacturaController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.facturaService.remove(id);
   }
-
-  @Get(':search')
-  @ApiOperation({ summary: 'Busqueda avanzada de una factura' })
+  @Get('/search')
+  @ApiOperation({ summary: 'Busqueda avanzada de facturas' })
   @ApiResponse({
-    status: 201,
-    description: 'Factura filtrada correctamente',
-    type: Factura,
+    status: 200,
+    description: 'Facturas filtradas correctamente',
+    type: [Factura],
   })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden, Token is not valid or expired',
-  })
-  advancedSearch(@Body() facturaFilterDto: FacturaFilterDto) {
+  @ApiQuery({ name: 'clienteNombre', required: false })
+  @ApiQuery({ name: 'bodegaNombre', required: false })
+  // ... agrega los ApiQuery que necesites para documentar los filtros
+  advancedSearch(@Query() facturaFilterDto: FacturaFilterDto) {
     return this.facturaService.advancedSearch(facturaFilterDto);
   }
 }
