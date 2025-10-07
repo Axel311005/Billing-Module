@@ -1,26 +1,78 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
+import { Empleado } from './entities/empleado.entity';
+import { User } from 'src/auth/entities/user.entity';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class EmpleadoService {
-  create(createEmpleadoDto: CreateEmpleadoDto) {
-    return 'This action adds a new empleado';
+  private readonly logger = new Logger('EmpleadoService');
+
+  constructor(
+    @InjectRepository(Empleado)
+    private readonly empleadoRepository: Repository<Empleado>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(createEmpleadoDto: CreateEmpleadoDto) {
+    try {
+      const empleado = this.empleadoRepository.create({
+        ...createEmpleadoDto,
+      });
+      await this.empleadoRepository.save(empleado);
+      return empleado;
+    } catch (error) {
+      console.log(error);
+      this.logger.error(error.message, error.stack);
+      throw new BadRequestException('No se pudo crear el empleado');
+    }
   }
 
-  findAll() {
-    return `This action returns all empleado`;
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    return this.empleadoRepository.find({
+      take: limit,
+      skip: offset,
+      relations: ['user'],
+      order: { idEmpleado: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} empleado`;
+  async findOne(id: number) {
+    const empleado = await this.empleadoRepository.findOne({
+      where: { idEmpleado: id },
+      relations: ['user'],
+    });
+    if (!empleado) {
+      throw new NotFoundException(`Empleado con id ${id} no encontrado`);
+    }
+    return empleado;
   }
 
-  update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
-    return `This action updates a #${id} empleado`;
+  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
+    const empleado = await this.empleadoRepository.preload({
+      idEmpleado: id,
+      ...updateEmpleadoDto,
+    });
+
+    if (!empleado) {
+      throw new NotFoundException(`Empleado con id ${id} no encontrado`);
+    }
+
+    return this.empleadoRepository.save(empleado);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} empleado`;
+  async remove(id: number) {
+    const empleado = await this.findOne(id);
+    await this.empleadoRepository.remove(empleado);
   }
 }

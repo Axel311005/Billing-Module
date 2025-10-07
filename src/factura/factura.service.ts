@@ -14,6 +14,7 @@ import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 import { Bodega } from 'src/bodega/entities/bodega.entity';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
 import {
   FacturaFilterDto,
   FacturaSortBy,
@@ -38,6 +39,8 @@ export class FacturaService {
     private readonly bodegaRepository: Repository<Bodega>,
     @InjectRepository(Consecutivo)
     private readonly consecutivoRepo: Repository<Consecutivo>,
+    @InjectRepository(Empleado)
+    private readonly empleadoRepository: Repository<Empleado>,
 
     private readonly consecutivoService: ConsecutivoService,
   ) {}
@@ -52,9 +55,14 @@ export class FacturaService {
         tipoCambioUsado,
         bodegaId,
         consecutivoId,
-        codigoFactura,
+        empleadoId,
         ...factura
       } = createFacturaDto;
+      const empleado = await findEntityOrFail(
+        this.empleadoRepository,
+        { idEmpleado: empleadoId },
+        `El empleado no fue encontrado o no existe`,
+      );
 
       const cliente = await findEntityOrFail(
         this.clienteRepository,
@@ -88,7 +96,7 @@ export class FacturaService {
         `El consecutivo no fue encontrado o no existe`,
       );
 
-      codigoFactura =
+      const codigoFactura =
         await this.consecutivoService.obtenerSiguienteConsecutivo('FACTURA');
 
       tipoCambioUsado = moneda.tipoCambio;
@@ -103,6 +111,7 @@ export class FacturaService {
         bodega,
         consecutivo,
         codigoFactura,
+        empleado,
       });
 
       await this.facturaRepository.save(nuevaFactura);
@@ -175,8 +184,17 @@ export class FacturaService {
       impuestoId,
       tipoCambioUsado,
       bodegaId,
+      empleadoId,
       ...toUpdate
     } = updateFacturaDto;
+    let empleado: Empleado | null = null;
+    if (empleadoId) {
+      empleado = await findEntityOrFail(
+        this.empleadoRepository,
+        { idEmpleado: empleadoId },
+        `El empleado no fue encontrado o no existe`,
+      );
+    }
 
     const cliente = await findEntityOrFail(
       this.clienteRepository,
@@ -216,6 +234,7 @@ export class FacturaService {
       impuesto,
       tipoCambioUsado,
       bodega,
+      empleado: empleado ?? undefined,
     });
 
     if (!factura) {

@@ -13,10 +13,10 @@ import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 import { Bodega } from 'src/bodega/entities/bodega.entity';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
 
 @Injectable()
 export class CompraService {
-
   private readonly logger = new Logger('CompraService');
 
   constructor(
@@ -31,41 +31,60 @@ export class CompraService {
     @InjectRepository(Bodega)
     private readonly bodegaRepository: Repository<Bodega>,
     @InjectRepository(Consecutivo)
-    private readonly consecutivoRepo : Repository<Consecutivo>,
+    private readonly consecutivoRepo: Repository<Consecutivo>,
+    @InjectRepository(Empleado)
+    private readonly empleadoRepository: Repository<Empleado>,
 
-    
-    private readonly consecutivoService : ConsecutivoService
-  ){}
+    private readonly consecutivoService: ConsecutivoService,
+  ) {}
 
   async create(createCompraDto: CreateCompraDto) {
     try {
-      
-      let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado, bodegaId, codigoCompra, consecutivoId,...compra} = createCompraDto;
+      let {
+        monedaId,
+        tipoPagoId,
+        impuestoId,
+        tipoCambioUsado,
+        bodegaId,
+        consecutivoId,
+        empleadoId,
+        ...compra
+      } = createCompraDto;
+      const empleado = await findEntityOrFail(
+        this.empleadoRepository,
+        { idEmpleado: empleadoId },
+        `El empleado no fue encontrado o no existe`,
+      );
 
       const moneda = await findEntityOrFail(
-        this.monedaRepository, {idMoneda: monedaId}, 
-        `La moneda no fue encontrada o no existe`
+        this.monedaRepository,
+        { idMoneda: monedaId },
+        `La moneda no fue encontrada o no existe`,
       );
       const tipoPago = await findEntityOrFail(
-        this.tipoPagoRepository, {idTipoPago: tipoPagoId}, 
-        `El tipo de pago no fue encontrado o no existe`
+        this.tipoPagoRepository,
+        { idTipoPago: tipoPagoId },
+        `El tipo de pago no fue encontrado o no existe`,
       );
       const impuesto = await findEntityOrFail(
-        this.impuestoRepository, {idImpuesto: impuestoId}, 
-        `El impuesto no fue encontrado o no existe`
+        this.impuestoRepository,
+        { idImpuesto: impuestoId },
+        `El impuesto no fue encontrado o no existe`,
       );
       const bodega = await findEntityOrFail(
-        this.bodegaRepository, {idBodega: bodegaId}, 
-        `La bodega no fue encontrado o no existe`
+        this.bodegaRepository,
+        { idBodega: bodegaId },
+        `La bodega no fue encontrado o no existe`,
       );
 
       const consecutivo = await findEntityOrFail(
-        this.consecutivoRepo, {idConsecutivo : consecutivoId},
-        `El consecutivo no fue encontrado o no existe`
-      )
+        this.consecutivoRepo,
+        { idConsecutivo: consecutivoId },
+        `El consecutivo no fue encontrado o no existe`,
+      );
 
-      codigoCompra = await this.consecutivoService.obtenerSiguienteConsecutivo('COMPRA');
-      
+      const codigoCompra =
+        await this.consecutivoService.obtenerSiguienteConsecutivo('COMPRA');
 
       tipoCambioUsado = moneda.tipoCambio;
 
@@ -78,15 +97,15 @@ export class CompraService {
         bodega,
         consecutivo,
         codigoCompra,
-      })
+        empleado,
+      });
 
       await this.compraRepository.save(nuevaCompra);
 
       return await this.compraRepository.findOne({
-        where : {idCompra : nuevaCompra.idCompra},
-        relations: ['moneda', 'tipoPago', 'impuesto', 'lineas','bodega']
-      })
-
+        where: { idCompra: nuevaCompra.idCompra },
+        relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega'],
+      });
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -96,20 +115,20 @@ export class CompraService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const {limit = 10, offset=0} = paginationDto
+    const { limit = 10, offset = 0 } = paginationDto;
     const compras = await this.compraRepository.find({
-      take:limit,
-      skip : offset,
-      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega']
-    })
+      take: limit,
+      skip: offset,
+      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega'],
+    });
 
     return compras;
   }
 
   async findOne(id: number) {
     const compra = await this.compraRepository.findOne({
-      where: {idCompra : id},
-      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega']
+      where: { idCompra: id },
+      relations: ['moneda', 'tipoPago', 'impuesto', 'lineas', 'bodega'],
     });
 
     if (!compra) {
@@ -120,37 +139,58 @@ export class CompraService {
   }
 
   async update(id: number, updateCompraDto: UpdateCompraDto) {
-    let {monedaId, tipoPagoId, impuestoId, tipoCambioUsado,bodegaId, ...toUpdate} = updateCompraDto;
+    let {
+      monedaId,
+      tipoPagoId,
+      impuestoId,
+      tipoCambioUsado,
+      bodegaId,
+      empleadoId,
+      ...toUpdate
+    } = updateCompraDto;
+    let empleado: Empleado | null = null;
+    if (empleadoId) {
+      empleado = await findEntityOrFail(
+        this.empleadoRepository,
+        { idEmpleado: empleadoId },
+        `El empleado no fue encontrado o no existe`,
+      );
+    }
 
     const moneda = await findEntityOrFail(
-      this.monedaRepository, {idMoneda: monedaId}, 
-      `La moneda no fue encontrada o no existe`
+      this.monedaRepository,
+      { idMoneda: monedaId },
+      `La moneda no fue encontrada o no existe`,
     );
     const tipoPago = await findEntityOrFail(
-      this.tipoPagoRepository, {idTipoPago: tipoPagoId}, 
-      `El tipo de pago no fue encontrado o no existe`
+      this.tipoPagoRepository,
+      { idTipoPago: tipoPagoId },
+      `El tipo de pago no fue encontrado o no existe`,
     );
     const impuesto = await findEntityOrFail(
-      this.impuestoRepository, {idImpuesto: impuestoId}, 
-      `El impuesto no fue encontrado o no existe`
+      this.impuestoRepository,
+      { idImpuesto: impuestoId },
+      `El impuesto no fue encontrado o no existe`,
     );
 
     const bodega = await findEntityOrFail(
-      this.bodegaRepository, {idBodega: bodegaId}, 
-      `La bodega no fue encontrado o no existe`
+      this.bodegaRepository,
+      { idBodega: bodegaId },
+      `La bodega no fue encontrado o no existe`,
     );
 
     tipoCambioUsado = moneda.tipoCambio;
 
     const compra = await this.compraRepository.preload({
-      idCompra : id, 
+      idCompra: id,
       ...toUpdate,
       moneda,
       tipoPago,
       impuesto,
       tipoCambioUsado,
-      bodega
-    })
+      bodega,
+      empleado: empleado ?? undefined,
+    });
 
     if (!compra) {
       console.log(`La compra con id ${id} no fue encontrada`);
@@ -158,7 +198,6 @@ export class CompraService {
     }
 
     return this.compraRepository.save(compra);
-
   }
 
   async remove(id: number) {
