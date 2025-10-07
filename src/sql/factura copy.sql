@@ -3,27 +3,31 @@
 
 -----------------------------------------Funciones para disminuir el inventario---------------------------------------
 
+-- Función: disminuir inventario cuando se inserta una línea de factura
 CREATE OR REPLACE FUNCTION fn_disminuir_inventario()
 RETURNS TRIGGER AS $$
 DECLARE
-  v_bodega_id INTEGER;
+    v_bodega_id INTEGER;
 BEGIN
-  SELECT id_bodega
-  INTO v_bodega_id
-  FROM factura
-  WHERE id_factura = NEW.id_factura;
+    -- Obtener la bodega de la factura
+    SELECT "bodegaIdBodega"
+    INTO v_bodega_id
+    FROM factura
+    WHERE id_factura = NEW."facturaIdFactura";
 
-  UPDATE existencia_bodega
-  SET cant_disponible = cant_disponible - NEW.cantidad
-  WHERE id_item = NEW.id_item
-    AND id_bodega = v_bodega_id;
+    -- Actualizar stock existente
+    UPDATE existencia_bodega
+    SET "cantDisponible" = "cantDisponible" - NEW.cantidad
+    WHERE "itemIdItem" = NEW."itemIdItem"
+      AND "bodegaIdBodega" = v_bodega_id;
 
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'No existe inventario para el item % en la bodega %',
-      NEW.id_item, v_bodega_id;
-  END IF;
+    -- Verificar que sí se actualizó
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'No existe inventario para el item % en la bodega %',
+            NEW."itemIdItem", v_bodega_id;
+    END IF;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -51,14 +55,17 @@ DECLARE
   v_porcentaje_impuesto NUMERIC;
   v_factura_id INTEGER;
 BEGIN
-  v_factura_id := COALESCE(NEW.id_factura, OLD.id_factura);
+  -- Identificar factura afectada
+  v_factura_id := COALESCE(NEW."facturaIdFactura", OLD."facturaIdFactura");
 
-  SELECT COALESCE(SUM(cantidad * precio_unitario), 0)
+  -- 1. Calcular subtotal
+  SELECT COALESCE(SUM(cantidad * "precioUnitario"), 0)
   INTO v_subtotal
   FROM factura_linea
-  WHERE id_factura = v_factura_id;
+  WHERE "facturaIdFactura" = v_factura_id;
 
-  SELECT porcentaje_descuento
+  -- 2. Obtener porcentaje de descuento (puede ser NULL)
+  SELECT "porcentajeDescuento"
   INTO v_porcentaje_descuento
   FROM factura
   WHERE id_factura = v_factura_id;
@@ -69,10 +76,11 @@ BEGIN
     v_descuento := 0;
   END IF;
 
+  -- 3. Obtener porcentaje de impuesto de la tabla impuesto
   SELECT i.porcentaje
   INTO v_porcentaje_impuesto
   FROM factura f
-  LEFT JOIN impuesto i ON f.id_impuesto = i.id_impuesto
+  JOIN impuesto i ON f."impuestoIdImpuesto" = i."idImpuesto"
   WHERE f.id_factura = v_factura_id;
 
   IF v_porcentaje_impuesto IS NOT NULL THEN
@@ -81,12 +89,14 @@ BEGIN
     v_impuesto := 0;
   END IF;
 
+  -- 4. Calcular total
   v_total := v_subtotal - v_descuento + v_impuesto;
 
+  -- 5. Actualizar la factura
   UPDATE factura
   SET subtotal = v_subtotal,
-      total_descuento = v_descuento,
-      total_impuesto = v_impuesto,
+      "totalDescuento" = v_descuento,
+      "totalImpuesto" = v_impuesto,
       total = v_total
   WHERE id_factura = v_factura_id;
 
@@ -113,26 +123,29 @@ EXECUTE FUNCTION actualizar_totales_factura();
 CREATE OR REPLACE FUNCTION fn_anular_factura()
 RETURNS TRIGGER AS $$
 DECLARE
-  v_line RECORD;
+    v_line RECORD;
 BEGIN
-  IF NEW.anulada = true AND OLD.anulada = false THEN
-    FOR v_line IN
-      SELECT fl.id_item, fl.cantidad, f.id_bodega
-      FROM factura_linea fl
-      JOIN factura f ON f.id_factura = fl.id_factura
-      WHERE fl.id_factura = NEW.id_factura
-    LOOP
-      UPDATE existencia_bodega
-      SET cant_disponible = cant_disponible + v_line.cantidad
-      WHERE id_item = v_line.id_item
-        AND id_bodega = v_line.id_bodega;
-    END LOOP;
+    -- Solo actuar cuando se marca como anulada
+    IF NEW.anulada = true AND OLD.anulada = false THEN
+        -- Devolver al inventario cada item de la factura
+        FOR v_line IN
+            SELECT fl."itemIdItem", fl.cantidad, f."bodegaIdBodega"
+            FROM factura_linea fl
+            JOIN factura f ON f.id_factura = fl."facturaIdFactura"
+            WHERE fl."facturaIdFactura" = NEW.id_factura
+        LOOP
+            UPDATE existencia_bodega
+            SET "cantDisponible" = "cantDisponible" + v_line.cantidad
+            WHERE "itemIdItem" = v_line."itemIdItem"
+              AND "bodegaIdBodega" = v_line."bodegaIdBodega";
+        END LOOP;
 
-    NEW.fecha_anulacion := NOW();
-    NEW.estado := 'ANULADA';
-  END IF;
+        -- Poner montos en cero
+        NEW."fechaAnulacion" := NOW();
+        NEW.estado := 'ANULADA';
+    END IF;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 

@@ -1,4 +1,3 @@
----------------------------------------------Funciones para la compra--------------------------------------------------
 
 
 -----------------------------------------Funciones para aumentar el inventario---------------------------------------
@@ -8,35 +7,35 @@
 CREATE OR REPLACE FUNCTION fn_aumentar_inventario()
 RETURNS TRIGGER AS $$
 DECLARE
-    v_bodega_id INTEGER;
+  v_bodega_id INTEGER;
 BEGIN
-    -- Obtener la bodega de la compra
-    SELECT "bodegaIdBodega"
-    INTO v_bodega_id
-    FROM compra
-    WHERE "idCompra" = NEW."compraIdCompra";
+  -- Obtener la bodega de la compra
+  SELECT id_bodega
+  INTO v_bodega_id
+  FROM compra
+  WHERE id_compra = NEW.id_compra;
 
-    -- Actualizar stock existente
-    UPDATE existencia_bodega
-    SET "cantDisponible" = "cantDisponible" + NEW.cantidad
-    WHERE "itemIdItem" = NEW."itemIdItem"
-      AND "bodegaIdBodega" = v_bodega_id;
+  -- Actualizar stock existente sumando la cantidad ingresada
+  UPDATE existencia_bodega
+  SET cant_disponible = cant_disponible + NEW.cantidad
+  WHERE id_item = NEW.id_item
+    AND id_bodega = v_bodega_id;
 
-    -- Si no se actualizó nada, insertamos
-    IF NOT FOUND THEN
-        INSERT INTO existencia_bodega (
-            "itemIdItem", "bodegaIdBodega", "cantDisponible",
-            "existenciaMaxima", "existenciaMinima", "puntoDeReorden"
-        )
-        VALUES (
-            NEW."itemIdItem",
-            v_bodega_id,
-            NEW.cantidad,
-            1, 0, 1
-        );
-    END IF;
+  -- Si no se actualizó ningún registro, crear existencia inicial básica
+  IF NOT FOUND THEN
+    INSERT INTO existencia_bodega (
+      id_item, id_bodega, cant_disponible,
+      existencia_maxima, existencia_minima, punto_de_reorden
+    )
+    VALUES (
+      NEW.id_item,
+      v_bodega_id,
+      NEW.cantidad,
+      1, 0, 1
+    );
+  END IF;
 
-    RETURN NEW;
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -51,23 +50,22 @@ EXECUTE FUNCTION fn_aumentar_inventario();
 
 
 -- -- Crear una compra en bodega 1
--- INSERT INTO compra ("codigoCompra", estado, subtotal, total, "tipoCambioUsado", "bodegaIdBodega")
+-- INSERT INTO compra (codigo_compra, estado, subtotal, total, tipo_cambio_usado, id_bodega)
 -- VALUES ('C001', 'ACTIVO', 100, 100, 1, 1)
--- RETURNING "idCompra";
+-- RETURNING id_compra;
 
--- -- Supongamos que devuelve idCompra = 10
+-- -- Supongamos que devuelve id_compra = 10
 
 -- -- Agregar línea de compra de item 5 con cantidad 20
--- INSERT INTO compra_linea (cantidad, "precioUnitario", "totalLinea", "compraIdCompra", "itemIdItem")
+-- INSERT INTO compra_linea (cantidad, precio_unitario, total_linea, id_compra, id_item)
 -- VALUES (20, 5, 100, 4, 3);
 
 -- -- Verificar inventario
--- SELECT * FROM existencia_bodega WHERE "itemIdItem" = 3 AND "bodegaIdBodega" = 1;
+-- SELECT * FROM existencia_bodega WHERE id_item = 3 AND id_bodega = 1;
 
 
 
 
-----------------------------------Funciones para calcular totales de la compra-----------------------------------------------------------------
 
 -- Función para recalcular totales de la compra
 CREATE OR REPLACE FUNCTION actualizar_totales_compra()
@@ -81,20 +79,20 @@ DECLARE
   v_porcentaje_impuesto NUMERIC;
   v_compra_id INTEGER;
 BEGIN
-  -- Identificar compra afectada
-  v_compra_id := COALESCE(NEW."compraIdCompra", OLD."compraIdCompra");
+  -- Identificar compra afectada (para INSERT/UPDATE/DELETE)
+  v_compra_id := COALESCE(NEW.id_compra, OLD.id_compra);
 
   -- 1. Calcular subtotal
-  SELECT COALESCE(SUM(cantidad * "precioUnitario"), 0)
+  SELECT COALESCE(SUM(cantidad * precio_unitario), 0)
   INTO v_subtotal
   FROM compra_linea
-  WHERE "compraIdCompra" = v_compra_id;
+  WHERE id_compra = v_compra_id;
 
   -- 2. Obtener porcentaje de descuento
-  SELECT "porcentajeDescuento"
+  SELECT porcentaje_descuento
   INTO v_porcentaje_descuento
   FROM compra
-  WHERE "idCompra" = v_compra_id;
+  WHERE id_compra = v_compra_id;
 
   IF v_porcentaje_descuento IS NOT NULL THEN
     v_descuento := v_subtotal * (v_porcentaje_descuento / 100);
@@ -102,12 +100,12 @@ BEGIN
     v_descuento := 0;
   END IF;
 
-  -- 3. Obtener porcentaje de impuesto (solo si tiene impuesto asignado)
+  -- 3. Obtener porcentaje de impuesto si existe impuesto asignado
   SELECT i.porcentaje
   INTO v_porcentaje_impuesto
   FROM compra c
-  LEFT JOIN impuesto i ON c."impuestoIdImpuesto" = i."idImpuesto"
-  WHERE c."idCompra" = v_compra_id;
+  LEFT JOIN impuesto i ON c.id_impuesto = i.id_impuesto
+  WHERE c.id_compra = v_compra_id;
 
   IF v_porcentaje_impuesto IS NOT NULL THEN
     v_impuesto := (v_subtotal - v_descuento) * (v_porcentaje_impuesto / 100);
@@ -121,10 +119,10 @@ BEGIN
   -- 5. Actualizar la compra
   UPDATE compra
   SET subtotal = v_subtotal,
-      "totalDescuento" = v_descuento,
-      "totalImpuesto" = v_impuesto,
+      total_descuento = v_descuento,
+      total_impuesto = v_impuesto,
       total = v_total
-  WHERE "idCompra" = v_compra_id;
+  WHERE id_compra = v_compra_id;
 
   RETURN NEW;
 END;
@@ -150,29 +148,29 @@ EXECUTE FUNCTION actualizar_totales_compra();
 CREATE OR REPLACE FUNCTION fn_anular_compra()
 RETURNS TRIGGER AS $$
 DECLARE
-    v_line RECORD;
+  v_line RECORD;
 BEGIN
-    -- Solo actuar cuando se marca como anulada
-    IF NEW.anulado = true AND OLD.anulado = false THEN
-        -- Restar del inventario cada item de la compra
-        FOR v_line IN
-            SELECT cl."itemIdItem", cl.cantidad, c."bodegaIdBodega"
-            FROM compra_linea cl
-            JOIN compra c ON c."idCompra" = cl."compraIdCompra"
-            WHERE cl."compraIdCompra" = NEW."idCompra"
-        LOOP
-            UPDATE existencia_bodega
-            SET "cantDisponible" = "cantDisponible" - v_line.cantidad
-            WHERE "itemIdItem" = v_line."itemIdItem"
-              AND "bodegaIdBodega" = v_line."bodegaIdBodega";
-        END LOOP;
+  -- Solo actuar cuando se marca como anulada
+  IF NEW.anulado = true AND OLD.anulado = false THEN
+    -- Restar del inventario cada item de la compra
+    FOR v_line IN
+      SELECT cl.id_item, cl.cantidad, c.id_bodega
+      FROM compra_linea cl
+      JOIN compra c ON c.id_compra = cl.id_compra
+      WHERE cl.id_compra = NEW.id_compra
+    LOOP
+      UPDATE existencia_bodega
+      SET cant_disponible = cant_disponible - v_line.cantidad
+      WHERE id_item = v_line.id_item
+        AND id_bodega = v_line.id_bodega;
+    END LOOP;
 
-        -- Poner la fecha de la anulacion
-        NEW."fechaAnulacion" := NOW();
-        NEW.estado := 'ANULADA';
-    END IF;
+    -- Poner la fecha de la anulacion y estado
+    NEW.fecha_anulacion := NOW();
+    NEW.estado := 'ANULADA';
+  END IF;
 
-    RETURN NEW;
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
