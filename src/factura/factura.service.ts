@@ -274,22 +274,23 @@ export class FacturaService {
 
     const qb = this.facturaRepository
       .createQueryBuilder('f')
-      .leftJoinAndSelect('f.clienteIdCliente', 'c')
-      .leftJoinAndSelect('f.bodegaIdBodega', 'b')
-      .leftJoinAndSelect('f.empleadoIdEmpleado', 'e');
+      // Relaciones según entity: cliente, bodega, empleado
+      .leftJoinAndSelect('f.cliente', 'c')
+      .leftJoinAndSelect('f.bodega', 'b')
+      .leftJoinAndSelect('f.empleado', 'e');
 
     if (clienteNombre)
       qb.andWhere('c.nombre ILIKE :cNom', { cNom: `%${clienteNombre}%` });
     if (bodegaNombre)
       qb.andWhere('b.descripcion ILIKE :bNom', { bNom: `%${bodegaNombre}%` });
     if (empleadoNombre)
-      qb.andWhere('e.primerNombre ILIKE :eNom', {
+      qb.andWhere('(e.primer_nombre ILIKE :eNom)', {
         eNom: `%${empleadoNombre}%`,
       });
 
-    if (id_cliente) qb.andWhere('c.id = :idc', { idc: id_cliente });
-    if (id_bodega) qb.andWhere('b.id = :idb', { idb: id_bodega });
-    if (id_empleado) qb.andWhere('e.id = :ide', { ide: id_empleado });
+    if (id_cliente) qb.andWhere('c.id_cliente = :idc', { idc: id_cliente });
+    if (id_bodega) qb.andWhere('b.id_bodega = :idb', { idb: id_bodega });
+    if (id_empleado) qb.andWhere('e.id_empleado = :ide', { ide: id_empleado });
 
     if (codigo_factura)
       qb.andWhere('f.codigo_factura = :cod', { cod: codigo_factura });
@@ -315,8 +316,8 @@ export class FacturaService {
       [FacturaSortBy.TOTAL]: 'f.total',
       [FacturaSortBy.CODIGO]: 'f.codigo_factura',
       [FacturaSortBy.CLIENTE]: 'c.nombre',
-      [FacturaSortBy.BODEGA]: 'b.nombre',
-      [FacturaSortBy.EMPLEADO]: 'e.nombre',
+      [FacturaSortBy.BODEGA]: 'b.descripcion',
+      [FacturaSortBy.EMPLEADO]: 'e.primer_nombre',
     };
     qb.orderBy(sortMap[sortBy] ?? 'f.fecha', sortDir as 'ASC' | 'DESC');
 
