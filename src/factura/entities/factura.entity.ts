@@ -10,6 +10,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -21,22 +22,27 @@ export class Factura {
   id_factura: number;
 
   @ManyToOne(() => Cliente, (cliente) => cliente.facturas)
+  @JoinColumn({ name: 'id_cliente' })
   cliente: Cliente;
 
   @ManyToOne(() => TipoPago, (tipoPago) => tipoPago.facturas)
+  @JoinColumn({ name: 'id_tipo_pago' })
   tipoPago: TipoPago;
 
   @ManyToOne(() => Moneda, (moneda) => moneda.facturas)
+  @JoinColumn({ name: 'id_moneda' })
   moneda: Moneda;
 
   @ManyToOne(() => Impuesto, (impuesto) => impuesto.facturas, {
     nullable: true,
   })
+  @JoinColumn({ name: 'id_impuesto' })
   impuesto: Impuesto;
 
   @ManyToOne(() => Bodega, (bodega) => bodega.facturas, {
     nullable: true,
   })
+  @JoinColumn({ name: 'id_bodega' })
   bodega: Bodega;
 
   @Column({ name: 'codigo_factura' })
@@ -86,8 +92,10 @@ export class Factura {
   lineas: FacturaLinea[];
 
   @ManyToOne(() => Consecutivo, (consecutivo) => consecutivo.facturas)
+  @JoinColumn({ name: 'id_consecutivo' })
   consecutivo: Consecutivo;
 
   @ManyToOne(() => Empleado, (empleado) => empleado.facturas)
+  @JoinColumn({ name: 'id_empleado' })
   empleado: Empleado;
 }
