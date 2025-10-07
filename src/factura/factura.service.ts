@@ -250,7 +250,7 @@ export class FacturaService {
     await this.facturaRepository.remove(factura!);
   }
 
-  async AdvancedSearch(dto: FacturaFilterDto) {
+  async advancedSearch(dto: FacturaFilterDto) {
     const {
       clienteNombre,
       bodegaNombre,
