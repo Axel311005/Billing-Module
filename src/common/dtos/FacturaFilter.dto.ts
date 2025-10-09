@@ -16,16 +16,22 @@ export enum FacturaSortBy {
   CLIENTE = 'cliente',
   BODEGA = 'bodega',
   EMPLEADO = 'empleado',
+  TIPO_PAGO = 'tipo_pago',
+  MONEDA = 'moneda',
 }
 
 export class FacturaFilterDto {
   @IsOptional() @IsString() clienteNombre?: string;
   @IsOptional() @IsString() bodegaNombre?: string;
   @IsOptional() @IsString() empleadoNombre?: string;
+  @IsOptional() @IsString() tipo_pago?: string;
+  @IsOptional() @IsString() moneda?: string;
 
   @IsOptional() @IsInt() @Type(() => Number) id_cliente?: number;
   @IsOptional() @IsInt() @Type(() => Number) id_bodega?: number;
   @IsOptional() @IsInt() @Type(() => Number) id_empleado?: number;
+  @IsOptional() @IsInt() @Type(() => Number) id_tipo_pago?: number;
+  @IsOptional() @IsInt() @Type(() => Number) id_moneda?: number;
 
   @IsOptional() @IsString() codigo_factura?: string;
   @IsOptional() @IsString() codigoLike?: string;

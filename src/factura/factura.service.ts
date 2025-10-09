@@ -255,9 +255,13 @@ export class FacturaService {
       clienteNombre,
       bodegaNombre,
       empleadoNombre,
+      tipo_pago,
+      moneda,
       id_cliente,
       id_bodega,
       id_empleado,
+      id_tipo_pago,
+      id_moneda,
       codigo_factura,
       codigoLike,
       estado,
@@ -277,7 +281,9 @@ export class FacturaService {
       // Relaciones según entity: cliente, bodega, empleado
       .leftJoinAndSelect('f.cliente', 'c')
       .leftJoinAndSelect('f.bodega', 'b')
-      .leftJoinAndSelect('f.empleado', 'e');
+      .leftJoinAndSelect('f.empleado', 'e')
+      .leftJoinAndSelect('f.moneda', 'm')
+      .leftJoinAndSelect('f.tipoPago', 'tp');
 
     if (clienteNombre)
       qb.andWhere('c.nombre ILIKE :cNom', { cNom: `%${clienteNombre}%` });
@@ -287,10 +293,17 @@ export class FacturaService {
       qb.andWhere('(e.primer_nombre ILIKE :eNom)', {
         eNom: `%${empleadoNombre}%`,
       });
+    if (moneda)
+      qb.andWhere('m.descripcion ILIKE :mNom', { mNom: `%${moneda}%` });
+    if (tipo_pago)
+      qb.andWhere('tp.descripcion ILIKE :tpNom', { tpNom: `%${tipo_pago}%` });
 
     if (id_cliente) qb.andWhere('c.id_cliente = :idc', { idc: id_cliente });
     if (id_bodega) qb.andWhere('b.id_bodega = :idb', { idb: id_bodega });
     if (id_empleado) qb.andWhere('e.id_empleado = :ide', { ide: id_empleado });
+    if (id_moneda) qb.andWhere('m.id_moneda = :idm', { idm: id_moneda });
+    if (id_tipo_pago)
+      qb.andWhere('tp.id_tipo_pago = :idtp', { idtp: id_tipo_pago });
 
     if (codigo_factura)
       qb.andWhere('f.codigo_factura = :cod', { cod: codigo_factura });
@@ -318,6 +331,8 @@ export class FacturaService {
       [FacturaSortBy.CLIENTE]: 'c.nombre',
       [FacturaSortBy.BODEGA]: 'b.descripcion',
       [FacturaSortBy.EMPLEADO]: 'e.primer_nombre',
+      [FacturaSortBy.TIPO_PAGO]: 'tp.descripcion',
+      [FacturaSortBy.MONEDA]: 'm.descripcion',
     };
     qb.orderBy(sortMap[sortBy] ?? 'f.fecha', sortDir as 'ASC' | 'DESC');
 
