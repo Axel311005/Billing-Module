@@ -37,8 +37,8 @@ export class EmpleadoController {
 
   @Get()
   @ApiOperation({ summary: 'Listar empleados con paginación' })
-  @ApiQuery({ name: 'limit', required: false })
-  @ApiQuery({ name: 'offset', required: false })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  @ApiQuery({ name: 'offset', required: false, example: 0 })
   @ApiResponse({
     status: 200,
     description: 'Lista de empleados',
