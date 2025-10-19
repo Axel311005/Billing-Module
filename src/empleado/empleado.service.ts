@@ -19,8 +19,6 @@ export class EmpleadoService {
   constructor(
     @InjectRepository(Empleado)
     private readonly empleadoRepository: Repository<Empleado>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createEmpleadoDto: CreateEmpleadoDto) {
@@ -50,7 +48,6 @@ export class EmpleadoService {
   async findOne(id: number) {
     const empleado = await this.empleadoRepository.findOne({
       where: { idEmpleado: id },
-      relations: ['user'],
     });
     if (!empleado) {
       throw new NotFoundException(`Empleado con id ${id} no encontrado`);

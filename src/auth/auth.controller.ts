@@ -12,7 +12,7 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { CreateUserDto, LoginUserDto, UpdateUserRolesDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/user.entity';
@@ -22,7 +22,7 @@ import { UserRoleGuard } from './guards/user-role/user-role.guard';
 import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces';
 import { Auth } from './decorators';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -83,4 +83,22 @@ export class AuthController {
   //     user
   //   }
   // }
+
+  @Patch('users/:id/roles')
+  @Auth(ValidRoles.gerente)
+  @ApiTags('Users')
+  @ApiOperation({ summary: 'Actualizar roles de un usuario' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario (UUID)',
+    example: 'a3f0f1c2-1234-4b5a-9c0d-ef1234567890',
+  })
+  @ApiResponse({ status: 200, description: 'Roles actualizados correctamente' })
+  @ApiResponse({
+    status: 400,
+    description: 'Solicitud inválida o usuario no existe',
+  })
+  updateUserRoles(@Param('id') id: string, @Body() dto: UpdateUserRolesDto) {
+    return this.authService.updateUserRoles(id, dto);
+  }
 }
