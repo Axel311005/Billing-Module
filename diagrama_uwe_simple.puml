@@ -1,0 +1,110 @@
+@startuml
+
+title Diagrama UWE - Sistema Moto Servicios Terry
+
+package SistemaMotoServiciosTerry {
+    
+    class PaginaPrincipal as index
+    class Login as login
+    class Registro as register
+    class RecuperarContrasena as forgot
+    class Dashboard as dashboard
+    
+    package GestionClientes {
+        class ListaClientes as clientList
+        class FormularioCliente as clientForm
+        class DetalleCliente as clientDetail
+    }
+    
+    package GestionInventario {
+        class CatalogoItems as inventoryList
+        class FormularioItem as itemForm
+        class ControlStock as stockControl
+    }
+    
+    package GestionServicios {
+        class RecepcionMotos as reception
+        class SeguimientoReparaciones as tracking
+        class GestionCitas as appointments
+    }
+    
+    package GestionFacturacion {
+        class ListaFacturas as invoiceList
+        class CrearFactura as invoiceForm
+        class Proformas as proformas
+    }
+    
+    package ReportesConsultas {
+        class ReportesEjecutivos as execReports
+        class ReportesOperativos as opReports
+    }
+    
+    package PortalCliente {
+        class PortalCliente as clientPortal
+        class CotizacionOnline as onlineQuote
+        class SeguimientoOnline as onlineTracking
+        class AgendarCitaOnline as onlineAppointment
+    }
+    
+    package Administracion {
+        class GestionUsuarios as userManagement
+        class ConfiguracionSistema as systemConfig
+    }
+}
+
+' Relaciones de Navegacion Principales
+index --> login
+index --> clientPortal
+index --> onlineQuote
+
+login --> dashboard
+login --> forgot
+register --> login
+
+dashboard --> clientList
+dashboard --> inventoryList
+dashboard --> reception
+dashboard --> invoiceList
+dashboard --> execReports
+
+' Navegacion Clientes
+clientList --> clientForm
+clientList --> clientDetail
+clientForm --> clientList
+clientDetail --> clientForm
+
+' Navegacion Inventario
+inventoryList --> itemForm
+itemForm --> inventoryList
+inventoryList --> stockControl
+
+' Navegacion Servicios
+reception --> tracking
+tracking --> appointments
+appointments --> tracking
+
+' Navegacion Facturacion
+invoiceList --> invoiceForm
+invoiceForm --> invoiceList
+invoiceList --> proformas
+
+' Navegacion Portal Cliente
+clientPortal --> onlineQuote
+clientPortal --> onlineTracking
+clientPortal --> onlineAppointment
+
+onlineQuote --> clientPortal
+onlineTracking --> clientPortal
+onlineAppointment --> clientPortal
+
+' Navegacion Administracion
+dashboard --> userManagement
+dashboard --> systemConfig
+
+' Relaciones Include/Extend
+invoiceForm ..> inventoryList : include
+invoiceForm ..> clientList : include
+onlineQuote ..> inventoryList : include
+tracking ..> clientPortal : extend
+
+@enduml

@@ -1,0 +1,177 @@
+@startuml
+
+title Diagrama de Casos de Uso - Sistema Moto Servicios Terry
+left to right direction
+
+' Ajustar márgenes y espaciado
+skinparam actorMargin 50
+skinparam usecaseMargin 40
+skinparam packageMargin 80
+skinparam usecasePadding 30
+skinparam actorFontSize 18
+skinparam usecaseFontSize 16
+skinparam packageFontSize 18
+skinparam linetype ortho
+
+' Actores
+actor Gerente
+actor Administrador  
+actor Vendedor
+actor Cliente
+
+' Paquetes y Casos de Uso
+package GestionUsuarios {
+    usecase GestionarUsuarios as UC1
+    usecase GestionarRoles as UC2
+    usecase Autenticacion as UC3
+}
+
+package GestionClientes {
+    usecase CRUDClientes as UC4
+}
+
+package GestionInventario {
+    usecase GestionarItems as UC5
+    usecase GestionarBodegas as UC6
+    usecase ControlExistencias as UC7
+    usecase ConsultarInventario as UC8
+}
+
+package GestionEmpleados {
+    usecase GestionarEmpleados as UC9
+}
+
+package GestionCompras {
+    usecase GestionarCompras as UC10
+}
+
+package GestionFacturacion {
+    usecase EmitirFacturas as UC11
+    usecase EmitirRecibos as UC12
+    usecase RealizarAjustes as UC13
+}
+
+package GestionCitas {
+    usecase CrearCitas as UC14
+    usecase CoordinarCitas as UC15
+    usecase AgendarEnLinea as UC16
+}
+
+package GestionServicios {
+    usecase RecepcionVehiculos as UC17
+    usecase ControlReparaciones as UC18
+    usecase SeguimientoReal as UC19
+    usecase NotificarCliente as UC20
+}
+
+package GestionProformas {
+    usecase CrearProformas as UC21
+    usecase AprobarProformas as UC22
+}
+
+package GestionCotizaciones {
+    usecase CrearCotizaciones as UC23
+    usecase CotizacionOnline as UC24
+}
+
+package ControlFinanciero {
+    usecase ControlCaja as UC25
+    usecase GestionarConsecutivos as UC26
+}
+
+package CatalogosMaestros {
+    usecase TiposPago as UC27
+    usecase Monedas as UC28
+    usecase Impuestos as UC29
+    usecase UnidadesMedida as UC30
+}
+
+package ReportesConsultas {
+    usecase ReportesEjecutivos as UC31
+    usecase ReportesOperativos as UC32
+    usecase CatalogoDigital as UC33
+}
+
+' Relaciones Gerente
+Gerente --> UC1
+Gerente --> UC2
+Gerente --> UC4
+Gerente --> UC8
+Gerente --> UC9
+Gerente --> UC11
+Gerente --> UC12
+Gerente --> UC15
+Gerente --> UC18
+Gerente --> UC22
+Gerente --> UC23
+Gerente --> UC25
+Gerente --> UC26
+Gerente --> UC31
+
+' Relaciones Administrador
+Administrador --> UC1
+Administrador --> UC2
+Administrador --> UC4
+Administrador --> UC5
+Administrador --> UC6
+Administrador --> UC7
+Administrador --> UC8
+Administrador --> UC9
+Administrador --> UC10
+Administrador --> UC11
+Administrador --> UC12
+Administrador --> UC13
+Administrador --> UC14
+Administrador --> UC15
+Administrador --> UC17
+Administrador --> UC18
+Administrador --> UC20
+Administrador --> UC21
+Administrador --> UC23
+Administrador --> UC25
+Administrador --> UC26
+Administrador --> UC27
+Administrador --> UC28
+Administrador --> UC29
+Administrador --> UC30
+Administrador --> UC32
+
+' Relaciones Vendedor
+Vendedor --> UC4
+Vendedor --> UC8
+Vendedor --> UC11
+Vendedor --> UC12
+Vendedor --> UC14
+Vendedor --> UC17
+Vendedor --> UC18
+Vendedor --> UC20
+Vendedor --> UC21
+Vendedor --> UC23
+
+' Relaciones Cliente
+Cliente --> UC8
+Cliente --> UC16
+Cliente --> UC19
+Cliente --> UC24
+Cliente --> UC33
+
+' Relaciones Include
+UC11 ..> UC8 : include
+UC11 ..> UC4 : include
+UC12 ..> UC4 : include
+UC14 ..> UC4 : include
+UC15 ..> UC14 : include
+UC17 ..> UC4 : include
+UC18 ..> UC17 : include
+UC20 ..> UC17 : include
+UC21 ..> UC4 : include
+UC22 ..> UC21 : include
+UC23 ..> UC4 : include
+UC24 ..> UC33 : include
+UC25 ..> UC26 : include
+
+' Relaciones Extend
+UC13 ..> UC11 : extend
+UC13 ..> UC12 : extend
+
+@enduml

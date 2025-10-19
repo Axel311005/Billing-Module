@@ -1,0 +1,185 @@
+@startuml MotoServiciosTerry_CasosDeUso
+
+!theme plain
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecaseStyle uml2
+skinparam packageFontSize 12
+skinparam usecaseFontSize 10
+
+title Diagrama de Casos de Uso - Sistema Moto Servicios Terry
+
+' Definición de Actores
+actor Gerente as G
+actor Administrador as A  
+actor Vendedor as V
+actor Cliente as C
+
+' Paquete 1: Gestión de Usuarios y Seguridad
+package "Gestión de Usuarios y Seguridad" {
+    usecase "Gestionar Usuarios" as UC1
+    usecase "Gestionar Roles" as UC2
+    usecase "Autenticación" as UC3
+}
+
+' Paquete 2: Gestión de Clientes
+package "Gestión de Clientes" {
+    usecase "CRUD Clientes" as UC4
+}
+
+' Paquete 3: Gestión de Inventario  
+package "Gestión de Inventario" {
+    usecase "Gestionar Items" as UC5
+    usecase "Gestionar Bodegas" as UC6
+    usecase "Control Existencias" as UC7
+    usecase "Consultar Inventario" as UC8
+}
+
+' Paquete 4: Gestión de Empleados
+package "Gestión de Empleados" {
+    usecase "Gestionar Empleados" as UC9
+}
+
+' Paquete 5: Gestión de Compras
+package "Gestión de Compras" {
+    usecase "Gestionar Compras" as UC10
+}
+
+' Paquete 6: Gestión de Facturación
+package "Gestión de Facturación" {
+    usecase "Emitir Facturas" as UC11
+    usecase "Emitir Recibos" as UC12
+    usecase "Realizar Ajustes" as UC13
+}
+
+' Paquete 7: Gestión de Citas
+package "Gestión de Citas" {
+    usecase "Crear Citas" as UC14
+    usecase "Coordinar Citas" as UC15
+    usecase "Agendar en Línea" as UC16
+}
+
+' Paquete 8: Gestión de Servicios
+package "Gestión de Servicios" {
+    usecase "Recepción Vehículos" as UC17
+    usecase "Control Reparaciones" as UC18
+    usecase "Seguimiento Real" as UC19
+    usecase "Notificar Cliente" as UC20
+}
+
+' Paquete 9: Gestión de Proformas
+package "Gestión de Proformas" {
+    usecase "Crear Proformas" as UC21
+    usecase "Aprobar Proformas" as UC22
+}
+
+' Paquete 10: Gestión de Cotizaciones
+package "Gestión de Cotizaciones" {
+    usecase "Crear Cotizaciones" as UC23
+    usecase "Cotización Online" as UC24
+}
+
+' Paquete 11: Control Financiero
+package "Control Financiero" {
+    usecase "Control de Caja" as UC25
+    usecase "Gestionar Consecutivos" as UC26
+}
+
+' Paquete 12: Catálogos Maestros
+package "Catálogos Maestros" {
+    usecase "Tipos de Pago" as UC27
+    usecase "Monedas" as UC28
+    usecase "Impuestos" as UC29
+    usecase "Unidades Medida" as UC30
+}
+
+' Paquete 13: Reportes y Consultas
+package "Reportes y Consultas" {
+    usecase "Reportes Ejecutivos" as UC31
+    usecase "Reportes Operativos" as UC32
+    usecase "Catálogo Digital" as UC33
+}
+
+' Relaciones Gerente (Acceso Global)
+G --> UC1
+G --> UC2
+G --> UC4
+G --> UC8
+G --> UC9
+G --> UC11
+G --> UC12
+G --> UC15
+G --> UC18
+G --> UC22
+G --> UC23
+G --> UC25
+G --> UC26
+G --> UC31
+
+' Relaciones Administrador (CRUD Completo)
+A --> UC1
+A --> UC2
+A --> UC4
+A --> UC5
+A --> UC6
+A --> UC7
+A --> UC8
+A --> UC9
+A --> UC10
+A --> UC11
+A --> UC12
+A --> UC13
+A --> UC14
+A --> UC15
+A --> UC17
+A --> UC18
+A --> UC20
+A --> UC21
+A --> UC23
+A --> UC25
+A --> UC26
+A --> UC27
+A --> UC28
+A --> UC29
+A --> UC30
+A --> UC32
+
+' Relaciones Vendedor (Operaciones de Venta)
+V --> UC4
+V --> UC8
+V --> UC11
+V --> UC12
+V --> UC14
+V --> UC17
+V --> UC18
+V --> UC20
+V --> UC21
+V --> UC23
+
+' Relaciones Cliente (Consulta y Autoservicio)
+C --> UC8
+C --> UC16
+C --> UC19
+C --> UC24
+C --> UC33
+
+' Relaciones Include principales
+UC11 ..> UC8 : <<include>>
+UC11 ..> UC4 : <<include>>
+UC12 ..> UC4 : <<include>>
+UC14 ..> UC4 : <<include>>
+UC15 ..> UC14 : <<include>>
+UC17 ..> UC4 : <<include>>
+UC18 ..> UC17 : <<include>>
+UC20 ..> UC17 : <<include>>
+UC21 ..> UC4 : <<include>>
+UC22 ..> UC21 : <<include>>
+UC23 ..> UC4 : <<include>>
+UC24 ..> UC33 : <<include>>
+UC25 ..> UC26 : <<include>>
+
+' Relaciones Extend
+UC13 ..> UC11 : <<extend>>
+UC13 ..> UC12 : <<extend>>
+
+@enduml

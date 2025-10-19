@@ -1,0 +1,227 @@
+@startuml
+
+title Diagrama UWE - Sistema Moto Servicios Terry
+
+package SistemaMotoServiciosTerry {
+    
+    class PaginaPrincipal as index <<web page>> {
+        + Bienvenida
+        + Acceso rapido
+        + Informacion general
+    }
+    
+    package Autenticacion {
+        class Login as login <<web page>> {
+            + Usuario
+            + Contrasena
+            + Recordar sesion
+        }
+        
+        class Registro as register <<web page>> {
+            + Datos personales
+            + Validacion
+        }
+        
+        class RecuperarContrasena as forgot <<web page>> {
+            + Email
+            + Envio de enlace
+        }
+    }
+    
+    class Dashboard as dashboard <<web page>> {
+        + Resumen general
+        + Accesos directos
+        + Notificaciones
+    }
+    
+    package GestionClientes {
+        class ListaClientes as clientList <<web page>> {
+            + Busqueda
+            + Filtros
+            + Paginacion
+        }
+        
+        class FormularioCliente as clientForm <<web page>> {
+            + Crear/Editar
+            + Validacion
+            + Historial
+        }
+        
+        class DetalleCliente as clientDetail <<web page>> {
+            + Informacion completa
+            + Historial servicios
+            + Facturas
+        }
+    }
+    
+    package GestionInventario {
+        class CatalogoItems as inventoryList <<web page>> {
+            + Lista productos
+            + Busqueda avanzada
+            + Stock disponible
+        }
+        
+        class FormularioItem as itemForm <<web page>> {
+            + Crear/Editar
+            + Categorias
+            + Precios
+        }
+        
+        class ControlStock as stockControl <<web page>> {
+            + Existencias
+            + Movimientos
+            + Alertas
+        }
+    }
+    
+    package GestionServicios {
+        class RecepcionMotos as reception <<web page>> {
+            + Formulario recepcion
+            + Fotos vehiculo
+            + Diagnostico inicial
+        }
+        
+        class SeguimientoReparaciones as tracking <<web page>> {
+            + Estado actual
+            + Historial
+            + Tiempo estimado
+        }
+        
+        class GestionCitas as appointments <<web page>> {
+            + Calendario
+            + Crear/Editar
+            + Notificaciones
+        }
+    }
+    
+    package GestionFacturacion {
+        class ListaFacturas as invoiceList <<web page>> {
+            + Busqueda
+            + Estados
+            + Exportar
+        }
+        
+        class CrearFactura as invoiceForm <<web page>> {
+            + Formulario
+            + Lineas detalle
+            + Calculos automaticos
+        }
+        
+        class Proformas as proformas <<web page>> {
+            + Crear proforma
+            + Aprobacion
+            + Seguros
+        }
+    }
+    
+    package ReportesConsultas {
+        class ReportesEjecutivos as execReports <<web page>> {
+            + Dashboard ejecutivo
+            + Graficos
+            + KPIs
+        }
+        
+        class ReportesOperativos as opReports <<web page>> {
+            + Reportes detallados
+            + Exportar datos
+            + Filtros avanzados
+        }
+    }
+    
+    package PortalCliente {
+        class PortalCliente as clientPortal <<web page>> {
+            + Mis servicios
+            + Historial
+            + Cotizaciones
+        }
+        
+        class CotizacionOnline as onlineQuote <<web page>> {
+            + Formulario cotizacion
+            + Catalogo servicios
+            + Calculo automatico
+        }
+        
+        class SeguimientoOnline as onlineTracking <<web page>> {
+            + Estado reparacion
+            + Tiempo real
+            + Notificaciones
+        }
+        
+        class AgendarCitaOnline as onlineAppointment <<web page>> {
+            + Calendario disponible
+            + Seleccion horario
+            + Confirmacion
+        }
+    }
+    
+    package Administracion {
+        class GestionUsuarios as userManagement <<web page>> {
+            + CRUD usuarios
+            + Roles y permisos
+            + Seguridad
+        }
+        
+        class ConfiguracionSistema as systemConfig <<web page>> {
+            + Parametros
+            + Catalogos maestros
+            + Backup
+        }
+    }
+}
+
+' Relaciones de Navegacion Principales
+index --> login : Acceso
+index --> clientPortal : Portal Cliente
+index --> onlineQuote : Cotizacion Online
+
+login --> dashboard : Autenticacion exitosa
+login --> forgot : Olvido contrasena
+register --> login : Registro exitoso
+
+dashboard --> clientList : Gestion Clientes
+dashboard --> inventoryList : Inventario
+dashboard --> reception : Recepcion
+dashboard --> invoiceList : Facturacion
+dashboard --> execReports : Reportes
+
+' Navegacion Clientes
+clientList --> clientForm : Crear/Editar
+clientList --> clientDetail : Ver Detalle
+clientForm --> clientList : Guardar
+clientDetail --> clientForm : Editar
+
+' Navegacion Inventario
+inventoryList --> itemForm : Crear/Editar
+itemForm --> inventoryList : Guardar
+inventoryList --> stockControl : Control Stock
+
+' Navegacion Servicios
+reception --> tracking : Crear Recepcion
+tracking --> appointments : Programar Cita
+appointments --> tracking : Ver Seguimiento
+
+' Navegacion Facturacion
+invoiceList --> invoiceForm : Crear Factura
+invoiceForm --> invoiceList : Guardar
+invoiceList --> proformas : Proformas
+
+' Navegacion Portal Cliente
+clientPortal --> onlineQuote : Nueva Cotizacion
+clientPortal --> onlineTracking : Seguimiento
+clientPortal --> onlineAppointment : Agendar Cita
+
+onlineQuote --> clientPortal : Cotizacion Lista
+onlineTracking --> clientPortal : Ver Historial
+onlineAppointment --> clientPortal : Cita Agendada
+
+' Navegacion Administracion
+dashboard --> userManagement : Usuarios
+dashboard --> systemConfig : Configuracion
+
+' Relaciones Include/Extend
+invoiceForm ..> inventoryList : include
+invoiceForm ..> clientList : include
+onlineQuote ..> inventoryList : include
+tracking ..> clientPortal : extend
+
+@enduml

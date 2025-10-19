@@ -1,0 +1,239 @@
+@startuml
+
+title Diagrama UWE - Sistema Moto Servicios Terry
+note top: UML-based Web Engineering (UWE) - Estructura de Navegación
+
+' Definición de elementos UWE
+package "Sistema Moto Servicios Terry" {
+    
+    ' Página Principal (Index)
+    class "Página Principal" as index <<web page>> {
+        + Bienvenida
+        + Acceso rápido
+        + Información general
+    }
+    
+    ' Módulo de Autenticación
+    package "Autenticación" {
+        class "Login" as login <<web page>> {
+            + Usuario
+            + Contraseña
+            + Recordar sesión
+        }
+        
+        class "Registro" as register <<web page>> {
+            + Datos personales
+            + Validación
+        }
+        
+        class "Recuperar Contraseña" as forgot <<web page>> {
+            + Email
+            + Envío de enlace
+        }
+    }
+    
+    ' Dashboard Principal
+    class "Dashboard" as dashboard <<web page>> {
+        + Resumen general
+        + Accesos directos
+        + Notificaciones
+    }
+    
+    ' Módulo de Clientes
+    package "Gestión de Clientes" {
+        class "Lista Clientes" as clientList <<web page>> {
+            + Búsqueda
+            + Filtros
+            + Paginación
+        }
+        
+        class "Formulario Cliente" as clientForm <<web page>> {
+            + Crear/Editar
+            + Validación
+            + Historial
+        }
+        
+        class "Detalle Cliente" as clientDetail <<web page>> {
+            + Información completa
+            + Historial servicios
+            + Facturas
+        }
+    }
+    
+    ' Módulo de Inventario
+    package "Gestión de Inventario" {
+        class "Catálogo Items" as inventoryList <<web page>> {
+            + Lista productos
+            + Búsqueda avanzada
+            + Stock disponible
+        }
+        
+        class "Formulario Item" as itemForm <<web page>> {
+            + Crear/Editar
+            + Categorías
+            + Precios
+        }
+        
+        class "Control Stock" as stockControl <<web page>> {
+            + Existencias
+            + Movimientos
+            + Alertas
+        }
+    }
+    
+    ' Módulo de Servicios
+    package "Gestión de Servicios" {
+        class "Recepción Motos" as reception <<web page>> {
+            + Formulario recepción
+            + Fotos vehículo
+            + Diagnóstico inicial
+        }
+        
+        class "Seguimiento Reparaciones" as tracking <<web page>> {
+            + Estado actual
+            + Historial
+            + Tiempo estimado
+        }
+        
+        class "Gestión Citas" as appointments <<web page>> {
+            + Calendario
+            + Crear/Editar
+            + Notificaciones
+        }
+    }
+    
+    ' Módulo de Facturación
+    package "Gestión de Facturación" {
+        class "Lista Facturas" as invoiceList <<web page>> {
+            + Búsqueda
+            + Estados
+            + Exportar
+        }
+        
+        class "Crear Factura" as invoiceForm <<web page>> {
+            + Formulario
+            + Líneas detalle
+            + Cálculos automáticos
+        }
+        
+        class "Proformas" as proformas <<web page>> {
+            + Crear proforma
+            + Aprobación
+            + Seguros
+        }
+    }
+    
+    ' Módulo de Reportes
+    package "Reportes y Consultas" {
+        class "Reportes Ejecutivos" as execReports <<web page>> {
+            + Dashboard ejecutivo
+            + Gráficos
+            + KPIs
+        }
+        
+        class "Reportes Operativos" as opReports <<web page>> {
+            + Reportes detallados
+            + Exportar datos
+            + Filtros avanzados
+        }
+    }
+    
+    ' Módulo Cliente Web
+    package "Portal Cliente" {
+        class "Portal Cliente" as clientPortal <<web page>> {
+            + Mis servicios
+            + Historial
+            + Cotizaciones
+        }
+        
+        class "Cotización Online" as onlineQuote <<web page>> {
+            + Formulario cotización
+            + Catálogo servicios
+            + Cálculo automático
+        }
+        
+        class "Seguimiento Online" as onlineTracking <<web page>> {
+            + Estado reparación
+            + Tiempo real
+            + Notificaciones
+        }
+        
+        class "Agendar Cita Online" as onlineAppointment <<web page>> {
+            + Calendario disponible
+            + Selección horario
+            + Confirmación
+        }
+    }
+    
+    ' Configuración del Sistema
+    package "Administración" {
+        class "Gestión Usuarios" as userManagement <<web page>> {
+            + CRUD usuarios
+            + Roles y permisos
+            + Seguridad
+        }
+        
+        class "Configuración Sistema" as systemConfig <<web page>> {
+            + Parámetros
+            + Catálogos maestros
+            + Backup
+        }
+    }
+}
+
+' Relaciones de Navegación Principales
+index --> login : "Acceso"
+index --> clientPortal : "Portal Cliente"
+index --> onlineQuote : "Cotización Online"
+
+login --> dashboard : "Autenticación exitosa"
+login --> forgot : "¿Olvidó contraseña?"
+register --> login : "Registro exitoso"
+
+dashboard --> clientList : "Gestión Clientes"
+dashboard --> inventoryList : "Inventario"
+dashboard --> reception : "Recepción"
+dashboard --> invoiceList : "Facturación"
+dashboard --> execReports : "Reportes"
+
+' Navegación Clientes
+clientList --> clientForm : "Crear/Editar"
+clientList --> clientDetail : "Ver Detalle"
+clientForm --> clientList : "Guardar"
+clientDetail --> clientForm : "Editar"
+
+' Navegación Inventario
+inventoryList --> itemForm : "Crear/Editar"
+itemForm --> inventoryList : "Guardar"
+inventoryList --> stockControl : "Control Stock"
+
+' Navegación Servicios
+reception --> tracking : "Crear Recepción"
+tracking --> appointments : "Programar Cita"
+appointments --> tracking : "Ver Seguimiento"
+
+' Navegación Facturación
+invoiceList --> invoiceForm : "Crear Factura"
+invoiceForm --> invoiceList : "Guardar"
+invoiceList --> proformas : "Proformas"
+
+' Navegación Portal Cliente
+clientPortal --> onlineQuote : "Nueva Cotización"
+clientPortal --> onlineTracking : "Seguimiento"
+clientPortal --> onlineAppointment : "Agendar Cita"
+
+onlineQuote --> clientPortal : "Cotización Lista"
+onlineTracking --> clientPortal : "Ver Historial"
+onlineAppointment --> clientPortal : "Cita Agendada"
+
+' Navegación Administración
+dashboard --> userManagement : "Usuarios"
+dashboard --> systemConfig : "Configuración"
+
+' Relaciones Include/Extend
+invoiceForm ..> inventoryList : <<include>> "Consultar Items"
+invoiceForm ..> clientList : <<include>> "Seleccionar Cliente"
+onlineQuote ..> inventoryList : <<include>> "Consultar Servicios"
+tracking ..> clientPortal : <<extend>> "Notificar Cliente"
+
+@enduml

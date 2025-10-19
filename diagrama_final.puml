@@ -1,0 +1,240 @@
+
+@startuml
+title Diagrama 1: Gestión de Personal y Seguridad
+left to right direction
+skinparam linetype ortho
+skinparam actorMargin 80
+skinparam usecaseMargin 70
+skinparam usecasePadding 28
+skinparam packageMargin 90
+skinparam ArrowThickness 1
+
+actor Gerente
+actor Administrador
+
+package GestionUsuarios {
+  usecase GestionarUsuarios as UC1
+  usecase GestionarRoles as UC2
+  usecase Autenticacion as UC3
+}
+package GestionEmpleados {
+  usecase GestionarEmpleados as UC9
+}
+package ControlFinanciero {
+  usecase GestionarConsecutivos as UC26
+}
+
+Gerente --> UC1
+Gerente --> UC2
+Gerente --> UC9
+Gerente --> UC26
+Gerente --> UC3
+
+Administrador --> UC1
+Administrador --> UC2
+Administrador --> UC9
+Administrador --> UC26
+Administrador --> UC3
+@enduml
+
+
+
+-----------------Diagrama 2------------------------------------
+
+@startuml
+title Diagrama 2: Inventario y Compras
+left to right direction
+skinparam linetype ortho
+skinparam actorMargin 80
+skinparam usecaseMargin 70
+skinparam usecasePadding 28
+skinparam packageMargin 90
+skinparam ArrowThickness 1
+
+actor Administrador
+actor Gerente
+
+package GestionInventario {
+  usecase GestionarItems as UC5
+  usecase GestionarBodegas as UC6
+  usecase ControlExistencias as UC7
+  usecase ConsultarInventario as UC8
+}
+package GestionCompras {
+  usecase GestionarCompras as UC10
+}
+
+Administrador --> UC5
+Administrador --> UC6
+Administrador --> UC7
+Administrador --> UC8
+Administrador --> UC10
+
+Gerente --> UC8
+@enduml
+
+
+----------------------------Diagrama 3------------------------------------
+@startuml
+title Diagrama 3: Atención al Cliente (Venta y Citas)
+left to right direction
+skinparam linetype ortho
+skinparam actorMargin 80
+skinparam usecaseMargin 70
+skinparam usecasePadding 28
+skinparam packageMargin 90
+skinparam ArrowThickness 1
+
+actor Cliente
+actor Vendedor
+actor Administrador
+
+package GestionClientes {
+  usecase CRUDClientes as UC4
+}
+package GestionCitas {
+  usecase CrearCitas as UC14
+  usecase CoordinarCitas as UC15
+  usecase AgendarEnLinea as UC16
+}
+package GestionCotizaciones {
+  usecase CrearCotizaciones as UC23
+  usecase CotizacionOnline as UC24
+}
+package GestionProformas {
+  usecase CrearProformas as UC21
+  usecase AprobarProformas as UC22
+}
+
+' Actores
+Vendedor --> UC4
+Vendedor --> UC14
+Vendedor --> UC21
+Vendedor --> UC23
+
+Administrador --> UC14
+Administrador --> UC15
+Administrador --> UC23
+Administrador --> UC21
+
+Cliente --> UC16
+Cliente --> UC24
+
+' Include/Extend (cruces necesarios)
+UC14 ..> UC4 : include
+UC15 ..> UC14 : include
+UC21 ..> UC4 : include
+UC22 ..> UC21 : include
+UC23 ..> UC4 : include
+
+' Catálogo Digital es de otro diagrama: referencia externa
+usecase "CatalogoDigital (externo)" as UC33_ext #EEEEEE
+UC24 ..> UC33_ext : include
+@enduml
+
+
+
+
+
+
+
+
+
+----------------------------Diagrama 4------------------------------------
+@startuml
+title Diagrama 4: Operaciones de Taller y Facturación
+left to right direction
+skinparam linetype ortho
+skinparam actorMargin 80
+skinparam usecaseMargin 70
+skinparam usecasePadding 28
+skinparam packageMargin 90
+skinparam ArrowThickness 1
+
+actor Vendedor
+actor Administrador
+actor Gerente
+
+package GestionServicios {
+  usecase RecepcionVehiculos as UC17
+  usecase ControlReparaciones as UC18
+  usecase SeguimientoReal as UC19
+  usecase NotificarCliente as UC20
+}
+package GestionFacturacion {
+  usecase EmitirFacturas as UC11
+  usecase EmitirRecibos as UC12
+  usecase RealizarAjustes as UC13
+}
+
+' Actores
+Vendedor --> UC17
+Vendedor --> UC18
+Vendedor --> UC20
+Vendedor --> UC11
+Vendedor --> UC12
+
+Administrador --> UC17
+Administrador --> UC18
+Administrador --> UC20
+Administrador --> UC11
+Administrador --> UC12
+Administrador --> UC13
+
+Gerente --> UC18
+Gerente --> UC11
+Gerente --> UC12
+
+' Referencias externas para includes
+usecase "CRUDClientes (externo)" as UC4_ext #EEEEEE
+usecase "ConsultarInventario (externo)" as UC8_ext #EEEEEE
+
+' Include/Extend
+UC17 ..> UC4_ext : include
+UC18 ..> UC17 : include
+UC20 ..> UC17 : include
+
+UC11 ..> UC8_ext : include
+UC11 ..> UC4_ext : include
+UC12 ..> UC4_ext : include
+
+UC13 ..> UC11 : extend
+UC13 ..> UC12 : extend
+@enduml
+
+
+----------------------------------Diagrama 5------------------------------------
+@startuml
+title Diagrama 5: Reportes y Catálogos Maestros
+left to right direction
+skinparam linetype ortho
+skinparam actorMargin 80
+skinparam usecaseMargin 70
+skinparam usecasePadding 28
+skinparam packageMargin 90
+skinparam ArrowThickness 1
+
+actor Gerente
+actor Administrador
+actor Cliente
+
+package CatalogosMaestros {
+  usecase TiposPago as UC27
+  usecase Monedas as UC28
+  usecase Impuestos as UC29
+  usecase UnidadesMedida as UC30
+}
+package ReportesConsultas {
+  usecase ReportesEjecutivos as UC31
+  usecase ReportesOperativos as UC32
+  usecase CatalogoDigital as UC33
+}
+
+Gerente --> UC31
+Administrador --> UC27
+Administrador --> UC28
+Administrador --> UC29
+Administrador --> UC30
+Administrador --> UC32
+Cliente --> UC33
+@enduml

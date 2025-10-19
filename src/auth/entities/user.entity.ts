@@ -28,9 +28,6 @@ export class User {
   })
   password: string;
 
-  @Column('text', { name: 'full_name' })
-  fullName: string;
-
   @Column('bool', {
     name: 'is_active',
     default: true,
@@ -40,7 +37,7 @@ export class User {
   @Column('text', {
     name: 'roles',
     array: true,
-    default: ['user'],
+    default: ['cliente'],
   })
   roles: string[];
 
