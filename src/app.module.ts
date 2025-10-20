@@ -21,6 +21,19 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConsecutivoModule } from './consecutivo/consecutivo.module';
 import { EmpleadoModule } from './empleado/empleado.module';
+import { CajaModule } from './caja/caja.module';
+import { MovimientoCajaModule } from './movimiento-caja/movimiento-caja.module';
+import { VehiculoModule } from './vehiculo/vehiculo.module';
+import { MotivoCitaModule } from './motivo-cita/motivo-cita.module';
+import { CitaModule } from './cita/cita.module';
+import { RecepcionModule } from './recepcion/recepcion.module';
+import { RecepcionSeguimientoModule } from './recepcion-seguimiento/recepcion-seguimiento.module';
+import { AseguradoraModule } from './aseguradora/aseguradora.module';
+import { TramiteSeguroModule } from './tramite-seguro/tramite-seguro.module';
+import { ProformaModule } from './proforma/proforma.module';
+import { ProformaLineasModule } from './proforma-lineas/proforma-lineas.module';
+import { CotizacionModule } from './cotizacion/cotizacion.module';
+import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion.module';
 
 @Module({
   imports: [
@@ -61,7 +74,22 @@ import { EmpleadoModule } from './empleado/empleado.module';
     ExistenciaBodegaModule, 
     ClasificacionItemModule, 
     AuthModule, 
-    UnidadMedidaModule, ConsecutivoModule, EmpleadoModule
+    UnidadMedidaModule, 
+    ConsecutivoModule, 
+    EmpleadoModule,
+    CajaModule,
+    MovimientoCajaModule,
+    VehiculoModule,
+    MotivoCitaModule,
+    CitaModule,
+    RecepcionModule,
+    RecepcionSeguimientoModule,
+    AseguradoraModule,
+    TramiteSeguroModule,
+    ProformaModule,
+    ProformaLineasModule,
+    CotizacionModule,
+    DetalleCotizacionModule
   ],
   
   

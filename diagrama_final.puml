@@ -133,13 +133,6 @@ UC24 ..> UC33_ext : include
 @enduml
 
 
-
-
-
-
-
-
-
 ----------------------------Diagrama 4------------------------------------
 @startuml
 title Diagrama 4: Operaciones de Taller y Facturación

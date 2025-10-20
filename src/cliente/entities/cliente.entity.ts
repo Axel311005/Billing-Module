@@ -1,5 +1,9 @@
 import { User } from 'src/auth/entities/user.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
+import { Vehiculo } from 'src/vehiculo/entities/vehiculo.entity';
+import { Cita } from 'src/cita/entities/cita.entity';
+import { TramiteSeguro } from 'src/tramite-seguro/entities/tramite-seguro.entity';
+import { Cotizacion } from 'src/cotizacion/entities/cotizacion.entity';
 import {
   Column,
   Entity,
@@ -53,6 +57,18 @@ export class Cliente {
 
   @OneToMany(() => Factura, (factura) => factura.cliente)
   facturas: Factura;
+
+  @OneToMany(() => Vehiculo, (vehiculo) => vehiculo.cliente)
+  vehiculos: Vehiculo[];
+
+  @OneToMany(() => Cita, (cita) => cita.cliente)
+  citas: Cita[];
+
+  @OneToMany(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.cliente)
+  tramitesSeguro: TramiteSeguro[];
+
+  @OneToMany(() => Cotizacion, (cotizacion) => cotizacion.cliente)
+  cotizaciones: Cotizacion[];
 
   @OneToOne(() => User, (user) => user.cliente)
   user: User;

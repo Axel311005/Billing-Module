@@ -3,6 +3,8 @@ import { CompraLinea } from 'src/compra-linea/entities/compra-linea.entity';
 import { ExistenciaBodega } from 'src/existencia-bodega/entities/existencia-bodega.entity';
 import { FacturaLinea } from 'src/factura-linea/entities/factura-linea.entity';
 import { UnidadMedida } from 'src/unidad-medida/entities/unidad-medida.entity';
+import { ProformaLineas } from 'src/proforma-lineas/entities/proforma-lineas.entity';
+import { DetalleCotizacion } from 'src/detalle-cotizacion/entities/detalle-cotizacion.entity';
 import {
   PrimaryGeneratedColumn,
   ManyToOne,
@@ -82,4 +84,10 @@ export class Item {
 
   @OneToMany(() => ExistenciaBodega, (existencia) => existencia.item)
   existencias: ExistenciaBodega[];
+
+  @OneToMany(() => ProformaLineas, (proformaLineas) => proformaLineas.item)
+  proformaLineas: ProformaLineas[];
+
+  @OneToMany(() => DetalleCotizacion, (detalleCotizacion) => detalleCotizacion.item)
+  detalleCotizaciones: DetalleCotizacion[];
 }

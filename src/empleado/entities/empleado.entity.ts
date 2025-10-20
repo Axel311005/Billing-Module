@@ -1,6 +1,7 @@
 import { User } from 'src/auth/entities/user.entity';
 import { Compra } from 'src/compra/entities/compra.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
+import { Recepcion } from 'src/recepcion/entities/recepcion.entity';
 import {
   Column,
   Entity,
@@ -65,6 +66,9 @@ export class Empleado {
 
   @OneToMany(() => Compra, (compra) => compra.empleado)
   compras: Compra;
+
+  @OneToMany(() => Recepcion, (recepcion) => recepcion.empleado)
+  recepciones: Recepcion[];
 
   @OneToOne(() => User, (user) => user.empleado)
   user: User;
