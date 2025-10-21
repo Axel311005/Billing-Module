@@ -66,6 +66,7 @@ export class Factura {
   @Column('decimal', {
     name: 'porcentaje_descuento',
     nullable: true,
+    default: 0,
   })
   porcentajeDescuento: number;
 

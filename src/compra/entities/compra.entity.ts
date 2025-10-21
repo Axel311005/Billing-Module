@@ -54,16 +54,20 @@ export class Compra {
   @Column('decimal', { name: 'subtotal', default: 0 })
   subtotal: number;
 
-  @Column('decimal', { name: 'total_impuesto', nullable: true })
+  @Column('decimal', { name: 'total_impuesto', nullable: true, default: 0 })
   totalImpuesto: number;
 
-  @Column('decimal', { name: 'porcentaje_descuento', nullable: true })
+  @Column('decimal', {
+    name: 'porcentaje_descuento',
+    nullable: true,
+    default: 0,
+  })
   porcentajeDescuento: number;
 
-  @Column('decimal', { name: 'total_descuento', nullable: true })
+  @Column('decimal', { name: 'total_descuento', nullable: true, default: 0 })
   totalDescuento: number;
 
-  @Column('decimal', { name: 'total' })
+  @Column('decimal', { name: 'total', default: 0 })
   total: number;
 
   @Column('decimal', { name: 'tipo_cambio_usado' })
