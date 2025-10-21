@@ -51,7 +51,7 @@ export class Compra {
   @Column({ name: 'fecha_anulacion', nullable: true })
   fechaAnulacion: Date;
 
-  @Column('decimal', { name: 'subtotal' })
+  @Column('decimal', { name: 'subtotal', default: 0 })
   subtotal: number;
 
   @Column('decimal', { name: 'total_impuesto', nullable: true })

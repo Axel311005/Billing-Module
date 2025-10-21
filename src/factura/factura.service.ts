@@ -18,7 +18,7 @@ import { Empleado } from 'src/empleado/entities/empleado.entity';
 import {
   FacturaFilterDto,
   FacturaSortBy,
-} from 'src/common/dtos/FacturaFilter.dto';
+} from 'src/factura/dto/FacturaFilter.dto';
 
 @Injectable()
 export class FacturaService {

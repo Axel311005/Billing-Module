@@ -21,7 +21,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { Factura } from './entities/factura.entity';
-import { FacturaFilterDto } from 'src/common/dtos/FacturaFilter.dto';
+import { FacturaFilterDto } from 'src/factura/dto/FacturaFilter.dto';
 
 @Controller('factura')
 @ApiTags('Factura')
