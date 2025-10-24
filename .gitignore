@@ -6,6 +6,10 @@ postgres/
 pgadmin/
 
 .env
+.env copy
+.env.do.testing
+.env.prod.do.example
+
 
 # Logs
 logs

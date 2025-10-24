@@ -41,10 +41,9 @@ import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion
 
     TypeOrmModule.forRoot({
       ssl: process.env.STAGE === 'prod',
-      extra:  {
-        ssl: process.env.STAGE === 'prod' 
-        ? {rejectUnauthorized: false}
-        : null
+      extra: {
+        ssl:
+          process.env.STAGE === 'prod' ? { rejectUnauthorized: false } : null,
       },
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -53,29 +52,30 @@ import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: true,
+      // IMPORTANT: Never synchronize schema automatically in production
+      // Control with env var to allow sync only in local development
+      synchronize: process.env.TYPEORM_SYNC === 'true',
     }),
-    
 
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..', 'public',)
-    }) ,
-    
-    ClienteModule, 
-    ItemModule, 
-    BodegaModule, 
-    FacturaModule, 
-    CompraModule, 
-    CompraLineaModule, 
-    FacturaLineaModule, 
-    ImpuestoModule, 
-    MonedaModule, 
-    TipoPagoModule, 
-    ExistenciaBodegaModule, 
-    ClasificacionItemModule, 
-    AuthModule, 
-    UnidadMedidaModule, 
-    ConsecutivoModule, 
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+
+    ClienteModule,
+    ItemModule,
+    BodegaModule,
+    FacturaModule,
+    CompraModule,
+    CompraLineaModule,
+    FacturaLineaModule,
+    ImpuestoModule,
+    MonedaModule,
+    TipoPagoModule,
+    ExistenciaBodegaModule,
+    ClasificacionItemModule,
+    AuthModule,
+    UnidadMedidaModule,
+    ConsecutivoModule,
     EmpleadoModule,
     CajaModule,
     MovimientoCajaModule,
@@ -89,9 +89,7 @@ import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion
     ProformaModule,
     ProformaLineasModule,
     CotizacionModule,
-    DetalleCotizacionModule
+    DetalleCotizacionModule,
   ],
-  
-  
 })
 export class AppModule {}
