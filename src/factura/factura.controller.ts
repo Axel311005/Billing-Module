@@ -24,6 +24,7 @@ import {
 import { Factura } from './entities/factura.entity';
 import { FacturaFilterDto } from 'src/factura/dto/FacturaFilter.dto';
 import { ReciboReportService } from 'src/reports/recibo-report.service';
+import { FacturaReciboData } from 'src/reports';
 import { Response } from 'express';
 
 @Controller('factura')
@@ -160,7 +161,10 @@ export class FacturaController {
   @Get(':id/recibo-pdf')
   @ApiOperation({ summary: 'Generar PDF del recibo de la factura' })
   @ApiParam({ name: 'id', description: 'ID de la factura', example: 1 })
-  @ApiResponse({ status: 200, description: 'PDF del recibo generado exitosamente' })
+  @ApiResponse({
+    status: 200,
+    description: 'PDF del recibo generado exitosamente',
+  })
   async generateReciboPDF(
     @Param('id', ParseIntPipe) id: number,
     @Res() response: Response,
@@ -192,5 +196,53 @@ export class FacturaController {
     };
 
     await this.reciboReportService.generateReciboPDF(reciboData, response);
+  }
+
+  @Get(':id/factura-recibo-pdf')
+  @ApiOperation({
+    summary: 'Generar PDF de la factura en formato preimpreso',
+  })
+  @ApiParam({ name: 'id', description: 'ID de la factura', example: 1 })
+  @ApiResponse({
+    status: 200,
+    description: 'PDF de la factura generado exitosamente',
+  })
+  async generateFacturaReciboPDF(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
+    const factura = await this.facturaService.findOne(id);
+
+    const lineas = (factura.lineas ?? []).map((linea) => ({
+      cantidad: Number(linea.cantidad ?? 0),
+      descripcion: linea.item?.descripcion ?? 'Item',
+      precioUnitario: Number(linea.precioUnitario ?? 0),
+      total: Number(linea.totalLinea ?? 0),
+    }));
+
+    const facturaReciboData: FacturaReciboData = {
+      numeroFactura: factura.codigoFactura,
+      fecha: factura.fecha,
+      cliente: {
+        nombre: factura.cliente?.nombre ?? '',
+        direccion: factura.cliente?.direccion ?? undefined,
+        ruc: factura.cliente?.ruc ?? undefined,
+      },
+      condicionPago: factura.tipoPago?.descripcion,
+      moneda: factura.moneda?.descripcion,
+      subtotal: Number(factura.subtotal ?? 0),
+      totalImpuesto: Number(factura.totalImpuesto ?? 0),
+      impuestoPorcentaje: factura.impuesto?.porcentaje
+        ? Number(factura.impuesto.porcentaje)
+        : undefined,
+      total: Number(factura.total ?? 0),
+      giroCheque: 'MOTO SERVICIOS TERRY Y/O EDUARDO ALBERTO TERRY',
+      lineas,
+    };
+
+    await this.reciboReportService.generateFacturaReciboPDF(
+      facturaReciboData,
+      response,
+    );
   }
 }

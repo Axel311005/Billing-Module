@@ -118,21 +118,21 @@ const reciboTitle = (numeroRecibo: string, fecha: Date): Content => {
             columns: [
               {
                 stack: [
-                  { text: 'DÍA', fontSize: 10, color: '#0514E6', },
+                  { text: 'DÍA', fontSize: 10, color: '#0514E6' },
                   { text: dia, fontSize: 10, margin: [0, 2, 0, 0] },
                 ],
                 width: 60,
               },
               {
                 stack: [
-                  { text: 'MES', fontSize: 10, color: '#0514E6', },
+                  { text: 'MES', fontSize: 10, color: '#0514E6' },
                   { text: mes, fontSize: 10, margin: [0, 2, 0, 0] },
                 ],
                 width: 60,
               },
               {
                 stack: [
-                  { text: 'AÑO', fontSize: 10, color: '#0514E6', },
+                  { text: 'AÑO', fontSize: 10, color: '#0514E6' },
                   { text: ano, fontSize: 10, margin: [0, 2, 0, 0] },
                 ],
                 width: 80,
@@ -161,7 +161,6 @@ const reciboTitle = (numeroRecibo: string, fecha: Date): Content => {
   };
 };
 
-
 const reciboBody = (data: ReciboData): Content => {
   return {
     stack: [
@@ -169,21 +168,36 @@ const reciboBody = (data: ReciboData): Content => {
         stack: [
           {
             text: [
-              { text: 'Recibí de: ', fontSize: 10, color: '#0514E6', bold: true },
+              {
+                text: 'Recibí de: ',
+                fontSize: 10,
+                color: '#0514E6',
+                bold: true,
+              },
               { text: data.recibidoDe, fontSize: 10, color: '#000000' },
             ],
             margin: [0, 5, 0, 10],
           },
           {
             text: [
-              { text: 'La cantidad de: ', fontSize: 10, color: '#0514E6', bold: true },
+              {
+                text: 'La cantidad de: ',
+                fontSize: 10,
+                color: '#0514E6',
+                bold: true,
+              },
               { text: data.cantidad, fontSize: 10, color: '#000000' },
             ],
             margin: [0, 5, 0, 10],
           },
           {
             text: [
-              { text: 'En concepto de: ', fontSize: 10, color: '#0514E6', bold: true },
+              {
+                text: 'En concepto de: ',
+                fontSize: 10,
+                color: '#0514E6',
+                bold: true,
+              },
               { text: data.concepto, fontSize: 10, color: '#000000' },
             ],
             margin: [0, 5, 0, 80],
@@ -194,8 +208,6 @@ const reciboBody = (data: ReciboData): Content => {
     ],
   };
 };
-
-
 
 // Footer con firmas
 const reciboFooter = (): Content => {
@@ -224,7 +236,7 @@ const reciboFooter = (): Content => {
             bold: true,
             margin: [150, 5, 0, 3],
           },
-          
+
           {
             text: '\n',
             fontSize: 10,
@@ -255,7 +267,7 @@ const reciboFooter = (): Content => {
             bold: true,
             margin: [150, 5, 0, 3],
           },
-          
+
           {
             text: '\n',
             fontSize: 10,
@@ -300,4 +312,3 @@ export const createReciboDocument = (
     },
   };
 };
-
