@@ -55,3 +55,7 @@ export class TramiteSeguro {
   @OneToMany(() => Proforma, (proforma) => proforma.tramiteSeguro)
   proformas: Proforma[];
 }
+
+
+
+

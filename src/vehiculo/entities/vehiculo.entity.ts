@@ -60,3 +60,4 @@ export class Vehiculo {
   @OneToMany(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.vehiculo)
   tramitesSeguro: TramiteSeguro[];
 }
+

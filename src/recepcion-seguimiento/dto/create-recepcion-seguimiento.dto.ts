@@ -36,3 +36,7 @@ export class CreateRecepcionSeguimientoDto {
     @IsOptional()
     descripcion?: string;
 }
+
+
+
+

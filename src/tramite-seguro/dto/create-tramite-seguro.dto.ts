@@ -71,3 +71,7 @@ export class CreateTramiteSeguroDto {
     @IsOptional()
     observaciones?: string;
 }
+
+
+
+

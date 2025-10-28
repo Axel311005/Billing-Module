@@ -9,6 +9,7 @@ pgadmin/
 .env copy
 .env.do.testing
 .env.prod.do.example
+.env.digitalOcean
 
 
 # Logs

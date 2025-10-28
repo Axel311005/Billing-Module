@@ -36,3 +36,7 @@ export class ProformaLineas {
   @JoinColumn({ name: 'id_item' })
   item: Item;
 }
+
+
+
+

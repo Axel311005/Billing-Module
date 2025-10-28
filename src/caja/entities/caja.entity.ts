@@ -29,3 +29,4 @@ export class Caja {
   @OneToMany(() => MovimientoCaja, (movimientoCaja) => movimientoCaja.caja)
   movimientosCaja: MovimientoCaja[];
 }
+

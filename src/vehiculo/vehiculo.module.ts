@@ -10,3 +10,7 @@ import { Vehiculo } from './entities/vehiculo.entity';
   providers: [VehiculoService],
 })
 export class VehiculoModule {}
+
+
+
+

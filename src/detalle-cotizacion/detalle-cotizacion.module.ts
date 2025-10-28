@@ -10,3 +10,7 @@ import { DetalleCotizacion } from './entities/detalle-cotizacion.entity';
   providers: [DetalleCotizacionService],
 })
 export class DetalleCotizacionModule {}
+
+
+
+

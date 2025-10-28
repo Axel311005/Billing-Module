@@ -29,3 +29,7 @@ export class Aseguradora {
   @OneToMany(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.aseguradora)
   tramitesSeguro: TramiteSeguro[];
 }
+
+
+
+

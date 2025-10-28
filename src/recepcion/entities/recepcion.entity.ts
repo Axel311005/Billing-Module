@@ -50,3 +50,7 @@ export class Recepcion {
   @OneToMany(() => RecepcionSeguimiento, (recepcionSeguimiento) => recepcionSeguimiento.recepcion)
   seguimientos: RecepcionSeguimiento[];
 }
+
+
+
+

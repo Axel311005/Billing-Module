@@ -11,6 +11,8 @@ import { Bodega } from 'src/bodega/entities/bodega.entity';
 import { ConsecutivoModule } from 'src/consecutivo/consecutivo.module';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { Empleado } from 'src/empleado/entities/empleado.entity';
+import { PrinterModule } from 'src/printer/printer.module';
+import { ReciboReportService } from 'src/reports/recibo-report.service';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { Empleado } from 'src/empleado/entities/empleado.entity';
       Empleado,
     ]),
     ConsecutivoModule,
+    PrinterModule,
   ],
   controllers: [FacturaController],
-  providers: [FacturaService],
+  providers: [FacturaService, ReciboReportService],
 })
 export class FacturaModule {}

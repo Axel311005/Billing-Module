@@ -10,3 +10,4 @@ import { MovimientoCaja } from './entities/movimiento-caja.entity';
   providers: [MovimientoCajaService],
 })
 export class MovimientoCajaModule {}
+

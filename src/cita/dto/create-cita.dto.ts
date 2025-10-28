@@ -61,3 +61,7 @@ export class CreateCitaDto {
     @IsOptional()
     canal?: string;
 }
+
+
+
+

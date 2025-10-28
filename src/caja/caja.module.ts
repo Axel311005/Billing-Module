@@ -10,3 +10,4 @@ import { Caja } from './entities/caja.entity';
   providers: [CajaService],
 })
 export class CajaModule {}
+

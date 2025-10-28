@@ -61,3 +61,7 @@ export class RecepcionSeguimientoController {
     return this.recepcionSeguimientoService.remove(id);
   }
 }
+
+
+
+

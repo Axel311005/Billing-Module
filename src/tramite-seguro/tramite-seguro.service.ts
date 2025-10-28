@@ -77,3 +77,7 @@ export class TramiteSeguroService {
     await this.tramiteSeguroRepository.remove(tramiteSeguro!);
   }
 }
+
+
+
+

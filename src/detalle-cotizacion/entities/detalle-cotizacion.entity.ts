@@ -36,3 +36,7 @@ export class DetalleCotizacion {
   @JoinColumn({ name: 'id_cotizacion' })
   cotizacion: Cotizacion;
 }
+
+
+
+

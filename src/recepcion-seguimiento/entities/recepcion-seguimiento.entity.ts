@@ -28,3 +28,7 @@ export class RecepcionSeguimiento {
   @JoinColumn({ name: 'id_recepcion' })
   recepcion: Recepcion;
 }
+
+
+
+

@@ -10,3 +10,7 @@ import { MotivoCita } from './entities/motivo-cita.entity';
   providers: [MotivoCitaService],
 })
 export class MotivoCitaModule {}
+
+
+
+

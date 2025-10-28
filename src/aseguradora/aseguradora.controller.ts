@@ -61,3 +61,7 @@ export class AseguradoraController {
     return this.aseguradoraService.remove(id);
   }
 }
+
+
+
+

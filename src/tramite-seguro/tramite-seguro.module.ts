@@ -10,3 +10,7 @@ import { TramiteSeguro } from './entities/tramite-seguro.entity';
   providers: [TramiteSeguroService],
 })
 export class TramiteSeguroModule {}
+
+
+
+

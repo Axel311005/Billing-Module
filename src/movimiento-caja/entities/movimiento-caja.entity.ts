@@ -37,3 +37,4 @@ export class MovimientoCaja {
   @JoinColumn({ name: 'id_caja' })
   caja: Caja;
 }
+

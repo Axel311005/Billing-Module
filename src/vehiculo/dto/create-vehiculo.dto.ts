@@ -74,3 +74,4 @@ export class CreateVehiculoDto {
     @IsOptional()
     numChasis?: string;
 }
+

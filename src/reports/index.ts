@@ -1,0 +1,5 @@
+export * from './recibo.report';
+export * from './recibo-report.service';
+export * from './sections/header.section';
+export * from './sections/footer.report';
+

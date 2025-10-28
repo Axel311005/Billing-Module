@@ -11,3 +11,7 @@ export class CreateMotivoCitaDto {
     @MinLength(1)
     descripcion: string;
 }
+
+
+
+

@@ -42,3 +42,7 @@ export class CreateProformaLineasDto {
     @IsDecimal()
     totalLinea: number;
 }
+
+
+
+

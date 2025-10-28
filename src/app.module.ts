@@ -34,6 +34,8 @@ import { ProformaModule } from './proforma/proforma.module';
 import { ProformaLineasModule } from './proforma-lineas/proforma-lineas.module';
 import { CotizacionModule } from './cotizacion/cotizacion.module';
 import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion.module';
+import { PrinterModule } from './printer/printer.module';
+import { StoreReportsModule } from './store-reports/store-reports.module';
 
 @Module({
   imports: [
@@ -52,6 +54,7 @@ import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
+
       // IMPORTANT: Never synchronize schema automatically in production
       // Control with env var to allow sync only in local development
       synchronize: process.env.TYPEORM_SYNC === 'true',
@@ -90,6 +93,8 @@ import { DetalleCotizacionModule } from './detalle-cotizacion/detalle-cotizacion
     ProformaLineasModule,
     CotizacionModule,
     DetalleCotizacionModule,
+    PrinterModule,
+    StoreReportsModule,
   ],
 })
 export class AppModule {}

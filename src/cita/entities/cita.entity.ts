@@ -61,3 +61,7 @@ export class Cita {
   @JoinColumn({ name: 'id_motivo_cita' })
   motivoCita: MotivoCita;
 }
+
+
+
+

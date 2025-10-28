@@ -61,3 +61,7 @@ export class MotivoCitaController {
     return this.motivoCitaService.remove(id);
   }
 }
+
+
+
+

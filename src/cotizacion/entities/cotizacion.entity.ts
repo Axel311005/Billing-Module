@@ -36,3 +36,7 @@ export class Cotizacion {
   @OneToMany(() => DetalleCotizacion, (detalleCotizacion) => detalleCotizacion.cotizacion)
   detalles: DetalleCotizacion[];
 }
+
+
+
+

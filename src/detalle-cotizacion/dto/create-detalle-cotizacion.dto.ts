@@ -42,3 +42,7 @@ export class CreateDetalleCotizacionDto {
     @IsDecimal()
     totalLineas: number;
 }
+
+
+
+

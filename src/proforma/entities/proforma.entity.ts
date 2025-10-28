@@ -23,14 +23,14 @@ export class Proforma {
   @Column({ name: 'fecha', type: 'timestamp' })
   fecha: Date;
 
-  @Column({ name: 'estado', default: 'pendiente' })
-  estado: string;
+  // @Column({ name: 'estado', default: 'pendiente' })
+  // estado: string;
 
   @Column({ name: 'observaciones', nullable: true })
   observaciones: string;
 
-  @Column('decimal', { name: 'total_estimado', precision: 10, scale: 2, nullable: true })
-  totalEstimado: number;
+  @Column('decimal', { name: 'total_estimado', precision: 10, scale: 2, nullable: true, default: 0 })
+  totalEstimado?: number;
 
   @ManyToOne(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.proformas)
   @JoinColumn({ name: 'id_tramite_seguro' })
@@ -39,3 +39,6 @@ export class Proforma {
   @OneToMany(() => ProformaLineas, (proformaLineas) => proformaLineas.proforma)
   lineas: ProformaLineas[];
 }
+
+
+

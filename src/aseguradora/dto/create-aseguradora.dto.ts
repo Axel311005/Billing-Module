@@ -47,3 +47,7 @@ export class CreateAseguradoraDto {
     @IsOptional()
     activo?: boolean;
 }
+
+
+
+

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  Res,
 } from '@nestjs/common';
 import { FacturaService } from './factura.service';
 import { CreateFacturaDto } from './dto/create-factura.dto';
@@ -22,11 +23,16 @@ import {
 } from '@nestjs/swagger';
 import { Factura } from './entities/factura.entity';
 import { FacturaFilterDto } from 'src/factura/dto/FacturaFilter.dto';
+import { ReciboReportService } from 'src/reports/recibo-report.service';
+import { Response } from 'express';
 
 @Controller('factura')
 @ApiTags('Factura')
 export class FacturaController {
-  constructor(private readonly facturaService: FacturaService) {}
+  constructor(
+    private readonly facturaService: FacturaService,
+    private readonly reciboReportService: ReciboReportService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear una nueva factura' })
@@ -149,5 +155,42 @@ export class FacturaController {
   })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.facturaService.remove(id);
+  }
+
+  @Get(':id/recibo-pdf')
+  @ApiOperation({ summary: 'Generar PDF del recibo de la factura' })
+  @ApiParam({ name: 'id', description: 'ID de la factura', example: 1 })
+  @ApiResponse({ status: 200, description: 'PDF del recibo generado exitosamente' })
+  async generateReciboPDF(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() response: Response,
+  ) {
+    const factura = await this.facturaService.findOne(id);
+
+    // Convertir el total a número para formatear correctamente
+    const total = Number(factura.total);
+
+    // Construir el concepto con los items de la factura
+    let concepto = `Pago de factura ${factura.codigoFactura}`;
+    if (factura.lineas && factura.lineas.length > 0) {
+      const items = factura.lineas
+        .slice(0, 3)
+        .map((linea) => linea.item?.descripcion || 'Item')
+        .join(', ');
+      concepto = `Pago por ${items}${factura.lineas.length > 3 ? ' y más...' : ''}`;
+    }
+
+    const reciboData = {
+      numeroRecibo: factura.codigoFactura,
+      fecha: factura.fecha,
+      recibidoDe: factura.cliente.nombre,
+      cantidad: `${total.toFixed(2)} ${factura.moneda.descripcion}`,
+      concepto,
+      empleado: factura.empleado
+        ? `${factura.empleado.primerNombre} ${factura.empleado.primerApellido}`
+        : undefined,
+    };
+
+    await this.reciboReportService.generateReciboPDF(reciboData, response);
   }
 }

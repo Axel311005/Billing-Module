@@ -10,3 +10,7 @@ import { Cotizacion } from './entities/cotizacion.entity';
   providers: [CotizacionService],
 })
 export class CotizacionModule {}
+
+
+
+

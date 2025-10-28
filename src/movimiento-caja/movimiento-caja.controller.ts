@@ -61,3 +61,4 @@ export class MovimientoCajaController {
     return this.movimientoCajaService.remove(id);
   }
 }
+

@@ -17,3 +17,7 @@ export class MotivoCita {
   @OneToMany(() => Cita, (cita) => cita.motivoCita)
   citas: Cita[];
 }
+
+
+
+

@@ -27,15 +27,15 @@ export class CreateProformaDto {
     @IsDateString()
     fecha: string;
 
-    @ApiProperty({
-        description: 'Estado de la proforma',
-        example: 'pendiente',
-        default: 'pendiente',
-        nullable: false
-    })
-    @IsString()
-    @IsOptional()
-    estado?: string;
+    // @ApiProperty({
+    //     description: 'Estado de la proforma',
+    //     example: 'pendiente',
+    //     default: 'pendiente',
+    //     nullable: false
+    // })
+    // @IsString()
+    // @IsOptional()
+    // estado?: string;
 
     @ApiProperty({
         description: 'Observaciones de la proforma',
@@ -55,3 +55,6 @@ export class CreateProformaDto {
     @IsOptional()
     totalEstimado?: number;
 }
+
+
+

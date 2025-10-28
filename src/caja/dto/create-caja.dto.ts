@@ -46,3 +46,4 @@ export class CreateCajaDto {
     @IsOptional()
     estado?: string;
 }
+

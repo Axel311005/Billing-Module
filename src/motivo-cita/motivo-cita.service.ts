@@ -73,3 +73,7 @@ export class MotivoCitaService {
     await this.motivoCitaRepository.remove(motivoCita!);
   }
 }
+
+
+
+

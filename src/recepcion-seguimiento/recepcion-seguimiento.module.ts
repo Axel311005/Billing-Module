@@ -10,3 +10,7 @@ import { RecepcionSeguimiento } from './entities/recepcion-seguimiento.entity';
   providers: [RecepcionSeguimientoService],
 })
 export class RecepcionSeguimientoModule {}
+
+
+
+

@@ -62,3 +62,4 @@ export class CreateMovimientoCajaDto {
     @IsOptional()
     tipoReferencia?: string;
 }
+

@@ -77,3 +77,7 @@ export class RecepcionSeguimientoService {
     await this.recepcionSeguimientoRepository.remove(recepcionSeguimiento!);
   }
 }
+
+
+
+

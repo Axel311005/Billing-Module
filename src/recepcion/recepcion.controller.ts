@@ -61,3 +61,7 @@ export class RecepcionController {
     return this.recepcionService.remove(id);
   }
 }
+
+
+
+

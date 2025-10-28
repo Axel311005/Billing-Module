@@ -73,3 +73,4 @@ export class CajaService {
     await this.cajaRepository.remove(caja!);
   }
 }
+

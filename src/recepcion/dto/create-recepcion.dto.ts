@@ -72,3 +72,7 @@ export class CreateRecepcionDto {
     @IsOptional()
     fechaEntregaReal?: string;
 }
+
+
+
+

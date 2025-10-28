@@ -10,3 +10,7 @@ import { Recepcion } from './entities/recepcion.entity';
   providers: [RecepcionService],
 })
 export class RecepcionModule {}
+
+
+
+

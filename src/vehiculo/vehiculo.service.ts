@@ -77,3 +77,4 @@ export class VehiculoService {
     await this.vehiculoRepository.remove(vehiculo!);
   }
 }
+

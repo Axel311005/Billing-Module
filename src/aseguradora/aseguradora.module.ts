@@ -10,3 +10,7 @@ import { Aseguradora } from './entities/aseguradora.entity';
   providers: [AseguradoraService],
 })
 export class AseguradoraModule {}
+
+
+
+

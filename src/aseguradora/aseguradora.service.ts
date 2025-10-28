@@ -73,3 +73,7 @@ export class AseguradoraService {
     await this.aseguradoraRepository.remove(aseguradora!);
   }
 }
+
+
+
+

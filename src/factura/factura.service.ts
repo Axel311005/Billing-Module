@@ -164,8 +164,10 @@ export class FacturaService {
         'moneda',
         'impuesto',
         'lineas',
+        'lineas.item',
         'bodega',
         'consecutivo',
+        'empleado',
       ],
     });
 

@@ -61,3 +61,7 @@ export class TramiteSeguroController {
     return this.tramiteSeguroService.remove(id);
   }
 }
+
+
+
+

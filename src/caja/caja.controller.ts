@@ -61,3 +61,4 @@ export class CajaController {
     return this.cajaService.remove(id);
   }
 }
+
