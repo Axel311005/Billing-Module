@@ -151,23 +151,49 @@ export class ProformaController {
       };
     });
 
-    const subtotal = Number(
-      lineas.reduce((acc, linea) => acc + linea.total, 0).toFixed(2),
+    const subtotalCalculado = lineas.reduce(
+      (acc, linea) => acc + Number(linea.total ?? 0),
+      0,
     );
-    const ivaPorcentaje = 15;
-    const iva = Number(((subtotal * ivaPorcentaje) / 100).toFixed(2));
-    const total = Number((subtotal + iva).toFixed(2));
+    const subtotalValor = Number(proforma.subtotal ?? subtotalCalculado);
+    const subtotal = Number(subtotalValor.toFixed(2));
+
+    const ivaPorcentaje = (() => {
+      const porcentaje = proforma.impuesto?.porcentaje;
+      if (porcentaje === undefined || porcentaje === null) {
+        return undefined;
+      }
+      return Number(porcentaje);
+    })();
+
+    const ivaBase = (() => {
+      if (ivaPorcentaje !== undefined) {
+        return subtotal * (ivaPorcentaje / 100);
+      }
+      return Number(proforma.totalImpuesto ?? 0);
+    })();
+
+    const ivaValor = Number(proforma.totalImpuesto ?? ivaBase);
+    const iva = Number(ivaValor.toFixed(2));
+
+    const totalEstimadoValor =
+      proforma.totalEstimado ??
+      subtotal + (ivaPorcentaje !== undefined ? iva : ivaBase);
+    const total = Number(Number(totalEstimadoValor).toFixed(2));
 
     const tramiteSeguro = proforma.tramiteSeguro;
     const vehiculo = tramiteSeguro?.vehiculo;
     const cliente = tramiteSeguro?.cliente;
+    const moneda = proforma.moneda;
+
+    const fechaDocumento = new Date();
 
     const proformaData: ProformaReportData = {
       numeroProforma:
         proforma.codigoProforma ??
         proforma.consecutivo?.descripcion ??
         `PROF-${proforma.idProforma}`,
-      fecha: proforma.fecha,
+      fecha: fechaDocumento,
       vehiculo: {
         expediente: tramiteSeguro?.numeroTramite ?? undefined,
         clienteNombre: cliente?.nombre ?? '',
@@ -179,7 +205,8 @@ export class ProformaController {
         color: vehiculo?.color ?? '',
         anio: vehiculo?.anio ?? '',
       },
-      monedaSimbolo: 'C$',
+      monedaSimbolo: moneda?.simbolo ?? moneda?.descripcion ?? 'C$',
+      monedaNombre: moneda?.descripcion,
       subtotal,
       iva,
       ivaPorcentaje,

@@ -184,11 +184,16 @@ export class FacturaController {
       concepto = `Pago por ${items}${factura.lineas.length > 3 ? ' y más...' : ''}`;
     }
 
+    const moneda = factura.moneda;
+
     const reciboData = {
       numeroRecibo: factura.codigoFactura,
       fecha: factura.fecha,
       recibidoDe: factura.cliente.nombre,
-      cantidad: `${total.toFixed(2)} ${factura.moneda.descripcion}`,
+      monto: total,
+      monedaSimbolo: moneda?.simbolo ?? moneda?.descripcion ?? 'C$',
+      monedaDescripcion: moneda?.descripcion,
+      montoDescripcion: undefined,
       concepto,
       empleado: factura.empleado
         ? `${factura.empleado.primerNombre} ${factura.empleado.primerApellido}`
@@ -230,6 +235,8 @@ export class FacturaController {
       },
       condicionPago: factura.tipoPago?.descripcion,
       moneda: factura.moneda?.descripcion,
+      monedaSimbolo:
+        factura.moneda?.simbolo ?? factura.moneda?.descripcion ?? 'C$',
       subtotal: Number(factura.subtotal ?? 0),
       totalImpuesto: Number(factura.totalImpuesto ?? 0),
       impuestoPorcentaje: factura.impuesto?.porcentaje

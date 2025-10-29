@@ -10,6 +10,8 @@ import { TramiteSeguro } from 'src/tramite-seguro/entities/tramite-seguro.entity
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
+import { Moneda } from 'src/moneda/entities/moneda.entity';
+import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 
 @Injectable()
 export class ProformaService {
@@ -22,13 +24,23 @@ export class ProformaService {
     private readonly tramiteSeguroRepository: Repository<TramiteSeguro>,
     @InjectRepository(Consecutivo)
     private readonly consecutivoRepository: Repository<Consecutivo>,
+    @InjectRepository(Moneda)
+    private readonly monedaRepository: Repository<Moneda>,
+    @InjectRepository(Impuesto)
+    private readonly impuestoRepository: Repository<Impuesto>,
     private readonly consecutivoService: ConsecutivoService,
   ) {}
 
   async create(createProformaDto: CreateProformaDto) {
     try {
-      const { idTramiteSeguro, idConsecutivo, ...proformaData } =
-        createProformaDto;
+      const {
+        idTramiteSeguro,
+        idConsecutivo,
+        idMoneda,
+        idImpuesto,
+        fecha,
+        ...proformaData
+      } = createProformaDto;
 
       const tramiteSeguro = await findEntityOrFail(
         this.tramiteSeguroRepository,
@@ -42,6 +54,21 @@ export class ProformaService {
         'El consecutivo no fue encontrado o no existe',
       );
 
+      const moneda = await findEntityOrFail(
+        this.monedaRepository,
+        { idMoneda },
+        'La moneda no fue encontrada o no existe',
+      );
+
+      let impuesto: Impuesto | null = null;
+      if (idImpuesto !== undefined) {
+        impuesto = await findEntityOrFail(
+          this.impuestoRepository,
+          { idImpuesto },
+          'El impuesto no fue encontrado o no existe',
+        );
+      }
+
       const codigoProforma =
         await this.consecutivoService.obtenerSiguienteConsecutivo('PROFORMA');
 
@@ -50,6 +77,9 @@ export class ProformaService {
         codigoProforma,
         tramiteSeguro,
         consecutivo,
+        moneda,
+        impuesto,
+        fecha: fecha ? new Date(fecha) : undefined,
       });
 
       const proformaGuardada =
@@ -57,7 +87,13 @@ export class ProformaService {
 
       return await this.proformaRepository.findOne({
         where: { idProforma: proformaGuardada.idProforma },
-        relations: ['tramiteSeguro', 'consecutivo', 'lineas'],
+        relations: [
+          'tramiteSeguro',
+          'consecutivo',
+          'moneda',
+          'impuesto',
+          'lineas',
+        ],
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -72,7 +108,7 @@ export class ProformaService {
     const proformas = await this.proformaRepository.find({
       take: limit,
       skip: offset,
-      relations: ['tramiteSeguro'],
+      relations: ['tramiteSeguro', 'moneda', 'impuesto', 'consecutivo'],
     });
 
     return proformas;
@@ -87,6 +123,8 @@ export class ProformaService {
         'tramiteSeguro.cliente',
         'tramiteSeguro.aseguradora',
         'consecutivo',
+        'moneda',
+        'impuesto',
         'lineas',
         'lineas.item',
       ],
@@ -100,18 +138,72 @@ export class ProformaService {
   }
 
   async update(id: number, updateProformaDto: UpdateProformaDto) {
-    const { ...toUpdate } = updateProformaDto;
-
-    const proforma = await this.proformaRepository.preload({
-      idProforma: id,
-      ...toUpdate,
+    const proforma = await this.proformaRepository.findOne({
+      where: { idProforma: id },
+      relations: [
+        'tramiteSeguro',
+        'consecutivo',
+        'moneda',
+        'impuesto',
+        'lineas',
+        'lineas.item',
+      ],
     });
 
     if (!proforma) {
       throw new NotFoundException(`La proforma con id ${id} no fue encontrada`);
     }
 
-    return this.proformaRepository.save(proforma);
+    const {
+      idTramiteSeguro,
+      idConsecutivo,
+      idMoneda,
+      idImpuesto,
+      fecha,
+      ...toUpdate
+    } = updateProformaDto;
+
+    if (idTramiteSeguro !== undefined) {
+      proforma.tramiteSeguro = await findEntityOrFail(
+        this.tramiteSeguroRepository,
+        { idTramiteSeguro },
+        'El trámite de seguro no fue encontrado o no existe',
+      );
+    }
+
+    if (idConsecutivo !== undefined) {
+      proforma.consecutivo = await findEntityOrFail(
+        this.consecutivoRepository,
+        { idConsecutivo },
+        'El consecutivo no fue encontrado o no existe',
+      );
+    }
+
+    if (idMoneda !== undefined) {
+      proforma.moneda = await findEntityOrFail(
+        this.monedaRepository,
+        { idMoneda },
+        'La moneda no fue encontrada o no existe',
+      );
+    }
+
+    if (idImpuesto !== undefined) {
+      proforma.impuesto = await findEntityOrFail(
+        this.impuestoRepository,
+        { idImpuesto },
+        'El impuesto no fue encontrado o no existe',
+      );
+    }
+
+    if (fecha !== undefined) {
+      proforma.fecha = new Date(fecha);
+    }
+
+    Object.assign(proforma, toUpdate);
+
+    await this.proformaRepository.save(proforma);
+
+    return this.findOne(id);
   }
 
   async remove(id: number) {

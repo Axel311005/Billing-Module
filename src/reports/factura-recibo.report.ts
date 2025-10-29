@@ -17,6 +17,7 @@ export interface FacturaReciboData {
   };
   condicionPago?: string;
   moneda?: string;
+  monedaSimbolo?: string;
   subtotal: number;
   totalImpuesto?: number;
   impuestoPorcentaje?: number;
@@ -51,14 +52,14 @@ const resolveDateParts = (input: Date | string) => {
   return { dia, mes, ano };
 };
 
-const formatCurrency = (value: number, currency?: string) => {
+const formatCurrency = (value: number, symbol?: string) => {
   const safeValue =
     typeof value === 'number' && !Number.isNaN(value) ? value : 0;
   const formatted = safeValue.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return currency ? `${currency} ${formatted}` : formatted;
+  return symbol ? `${symbol} ${formatted}` : formatted;
 };
 
 const formatQuantity = (value: number) => {
@@ -208,12 +209,12 @@ const itemsTable = (data: FacturaReciboData): Content => {
     },
     { text: linea.descripcion, margin: [6, 5, 6, 5] },
     {
-      text: formatCurrency(linea.precioUnitario),
+      text: formatCurrency(linea.precioUnitario, data.monedaSimbolo),
       alignment: 'right',
       margin: [6, 5, 6, 5],
     },
     {
-      text: formatCurrency(linea.total),
+      text: formatCurrency(linea.total, data.monedaSimbolo),
       alignment: 'right',
       margin: [6, 5, 6, 5],
     },
@@ -281,15 +282,24 @@ const totalsSection = (data: FacturaReciboData): Content => {
           body: [
             [
               { text: 'SUB-TOTAL', style: 'totalsLabel' },
-              { text: formatCurrency(data.subtotal), style: 'totalsValue' },
+              {
+                text: formatCurrency(data.subtotal, data.monedaSimbolo),
+                style: 'totalsValue',
+              },
             ],
             [
               { text: porcentajeTexto, style: 'totalsLabel' },
-              { text: formatCurrency(impuestoValor), style: 'totalsValue' },
+              {
+                text: formatCurrency(impuestoValor, data.monedaSimbolo),
+                style: 'totalsValue',
+              },
             ],
             [
               { text: 'TOTAL', style: 'totalsLabelBold' },
-              { text: formatCurrency(data.total), style: 'totalsValueBold' },
+              {
+                text: formatCurrency(data.total, data.monedaSimbolo),
+                style: 'totalsValueBold',
+              },
             ],
           ],
         },

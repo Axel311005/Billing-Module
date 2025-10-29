@@ -24,6 +24,7 @@ export interface ProformaReportData {
   fecha: Date | string;
   vehiculo: ProformaVehicleInfo;
   monedaSimbolo?: string;
+  monedaNombre?: string;
   subtotal: number;
   iva: number;
   ivaPorcentaje?: number;
@@ -105,25 +106,26 @@ const headerSection = (data: ProformaReportData): Content => {
         ],
       },
       {
-        width: 'auto',
-        alignment: 'right',
+        width: 120,
         stack: [
           {
             text: 'PROFORMA',
-            fontSize: 16,
+            fontSize: 14,
             bold: true,
             color: brandColor,
+            alignment: 'center',
           },
           {
             text: data.numeroProforma ?? '',
-            fontSize: 12,
+            fontSize: 11,
             bold: true,
             color: accentColor,
-            margin: [0, 4, 0, 10],
+            margin: [0, 2, 0, 4],
+            alignment: 'center',
           },
           {
             table: {
-              widths: [25, 25, 35],
+              widths: [30, 30, 40],
               body: [
                 [
                   { text: 'DÍA', style: 'dateLabel' },
@@ -230,28 +232,28 @@ const itemsTable = (data: ProformaReportData): Content => {
     {
       text: formatQuantity(linea.cantidad),
       alignment: 'center',
-      margin: [4, 6, 4, 6],
+      margin: [4, 4, 4, 4],
     },
-    { text: linea.descripcion ?? '', margin: [6, 6, 6, 6] },
+    { text: linea.descripcion ?? '', margin: [4, 4, 4, 4] },
     {
       text: formatCurrency(linea.precioUnitario, data.monedaSimbolo),
       alignment: 'right',
-      margin: [6, 6, 6, 6],
+      margin: [4, 4, 4, 4],
     },
     {
       text: formatCurrency(linea.total, data.monedaSimbolo),
       alignment: 'right',
-      margin: [6, 6, 6, 6],
+      margin: [4, 4, 4, 4],
     },
   ]);
 
-  const minRows = 18;
+  const minRows = 14;
   while (rows.length < minRows) {
     rows.push([
-      { text: ' ', margin: [4, 10, 4, 10] },
-      { text: ' ', margin: [6, 10, 6, 10] },
-      { text: ' ', margin: [6, 10, 6, 10] },
-      { text: ' ', margin: [6, 10, 6, 10] },
+      { text: ' ', margin: [4, 6, 4, 6] },
+      { text: ' ', margin: [4, 6, 4, 6] },
+      { text: ' ', margin: [4, 6, 4, 6] },
+      { text: ' ', margin: [4, 6, 4, 6] },
     ]);
   }
 
@@ -295,17 +297,29 @@ const totalsSection = (data: ProformaReportData): Content => {
     columns: [
       {
         width: '*',
-        stack: [
-          {
-            text: data.nota ?? defaultNote,
-            margin: [0, 4, 0, 2],
-            fontSize: 8,
-          },
-          {
-            text: data.chequeNombre ?? defaultChequeMessage,
-            fontSize: 8,
-          },
-        ],
+        stack: (() => {
+          const items: Content[] = [
+            {
+              text: data.nota ?? defaultNote,
+              margin: [0, 4, 0, 2],
+              fontSize: 8,
+            },
+            {
+              text: data.chequeNombre ?? defaultChequeMessage,
+              fontSize: 8,
+            },
+          ];
+
+          if (data.monedaNombre) {
+            items.push({
+              text: `Moneda: ${data.monedaNombre}`,
+              fontSize: 8,
+              margin: [0, 4, 0, 0],
+            });
+          }
+
+          return items;
+        })(),
       },
       {
         width: 190,

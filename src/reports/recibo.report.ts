@@ -4,7 +4,10 @@ export interface ReciboData {
   numeroRecibo: string;
   fecha: Date;
   recibidoDe: string;
-  cantidad: string;
+  monto: number;
+  monedaSimbolo?: string;
+  monedaDescripcion?: string;
+  montoDescripcion?: string;
   concepto: string;
   empleado?: string;
 }
@@ -161,49 +164,81 @@ const reciboTitle = (numeroRecibo: string, fecha: Date): Content => {
   };
 };
 
+const formatCurrency = (value: number, symbol?: string) => {
+  const safeValue =
+    typeof value === 'number' && !Number.isNaN(value) ? value : 0;
+  const formatted = safeValue.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return symbol ? `${symbol} ${formatted}` : formatted;
+};
+
 const reciboBody = (data: ReciboData): Content => {
+  const formattedAmount = formatCurrency(data.monto, data.monedaSimbolo);
+  const currencyDetails = data.monedaDescripcion
+    ? ` (${data.monedaDescripcion})`
+    : '';
+
+  const amountLines: Content[] = [
+    {
+      text: [
+        {
+          text: 'Recibí de: ',
+          fontSize: 10,
+          color: '#0514E6',
+          bold: true,
+        },
+        { text: data.recibidoDe, fontSize: 10, color: '#000000' },
+      ],
+      margin: [0, 5, 0, 10] as [number, number, number, number],
+    },
+    {
+      text: [
+        {
+          text: 'La cantidad de: ',
+          fontSize: 10,
+          color: '#0514E6',
+          bold: true,
+        },
+        {
+          text: `${formattedAmount}${currencyDetails}`,
+          fontSize: 10,
+          color: '#000000',
+        },
+      ],
+      margin: [0, 5, 0, 4] as [number, number, number, number],
+    },
+  ];
+
+  if (data.montoDescripcion) {
+    amountLines.push({
+      text: data.montoDescripcion,
+      fontSize: 9,
+      italics: true,
+      color: '#000000',
+      margin: [0, 0, 0, 8] as [number, number, number, number],
+    });
+  }
+
+  amountLines.push({
+    text: [
+      {
+        text: 'En concepto de: ',
+        fontSize: 10,
+        color: '#0514E6',
+        bold: true,
+      },
+      { text: data.concepto, fontSize: 10, color: '#000000' },
+    ],
+    margin: [0, 5, 0, 80] as [number, number, number, number],
+  });
+
   return {
     stack: [
       {
-        stack: [
-          {
-            text: [
-              {
-                text: 'Recibí de: ',
-                fontSize: 10,
-                color: '#0514E6',
-                bold: true,
-              },
-              { text: data.recibidoDe, fontSize: 10, color: '#000000' },
-            ],
-            margin: [0, 5, 0, 10],
-          },
-          {
-            text: [
-              {
-                text: 'La cantidad de: ',
-                fontSize: 10,
-                color: '#0514E6',
-                bold: true,
-              },
-              { text: data.cantidad, fontSize: 10, color: '#000000' },
-            ],
-            margin: [0, 5, 0, 10],
-          },
-          {
-            text: [
-              {
-                text: 'En concepto de: ',
-                fontSize: 10,
-                color: '#0514E6',
-                bold: true,
-              },
-              { text: data.concepto, fontSize: 10, color: '#000000' },
-            ],
-            margin: [0, 5, 0, 80],
-          },
-        ],
-        margin: [0, 20, 0, 0],
+        stack: amountLines,
+        margin: [0, 20, 0, 0] as [number, number, number, number],
       },
     ],
   };

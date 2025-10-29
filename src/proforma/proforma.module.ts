@@ -8,10 +8,18 @@ import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { ConsecutivoModule } from 'src/consecutivo/consecutivo.module';
 import { PrinterModule } from 'src/printer/printer.module';
 import { ReciboReportService } from 'src/reports/recibo-report.service';
+import { Moneda } from 'src/moneda/entities/moneda.entity';
+import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Proforma, TramiteSeguro, Consecutivo]),
+    TypeOrmModule.forFeature([
+      Proforma,
+      TramiteSeguro,
+      Consecutivo,
+      Moneda,
+      Impuesto,
+    ]),
     ConsecutivoModule,
     PrinterModule,
   ],

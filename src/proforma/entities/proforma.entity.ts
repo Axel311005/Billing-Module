@@ -9,6 +9,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
+import { Moneda } from 'src/moneda/entities/moneda.entity';
+import { Impuesto } from 'src/impuesto/entities/impuesto.entity';
 
 @Entity()
 export class Proforma {
@@ -23,6 +25,16 @@ export class Proforma {
   @JoinColumn({ name: 'id_consecutivo' })
   consecutivo: Consecutivo;
 
+  @ManyToOne(() => Moneda, (moneda) => moneda.proformas)
+  @JoinColumn({ name: 'id_moneda' })
+  moneda: Moneda;
+
+  @ManyToOne(() => Impuesto, (impuesto) => impuesto.proformas, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'id_impuesto' })
+  impuesto?: Impuesto | null;
+
   @Column({ name: 'codigo_proforma', nullable: true })
   codigoProforma: string;
 
@@ -32,6 +44,12 @@ export class Proforma {
     default: () => 'CURRENT_TIMESTAMP',
   })
   fecha: Date;
+
+  @Column({ name: 'subtotal', default: 0 })
+  subtotal: number;
+
+  @Column({ name: 'total_impuesto', default: 0 })
+  totalImpuesto: number;
 
   // @Column({ name: 'estado', default: 'pendiente' })
   // estado: string;

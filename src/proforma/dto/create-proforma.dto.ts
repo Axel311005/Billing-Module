@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDateString,
-  IsDecimal,
-  IsNumber,
+  IsInt,
   IsOptional,
+  IsPositive,
   IsString,
-  MinLength,
 } from 'class-validator';
 
 export class CreateProformaDto {
@@ -14,7 +13,8 @@ export class CreateProformaDto {
     example: 1,
     nullable: false,
   })
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   idTramiteSeguro: number;
 
   @ApiProperty({
@@ -22,8 +22,28 @@ export class CreateProformaDto {
     example: 1,
     nullable: false,
   })
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   idConsecutivo: number;
+
+  @ApiProperty({
+    description: 'ID de la moneda usada en la proforma',
+    example: 1,
+    nullable: false,
+  })
+  @IsInt()
+  @IsPositive()
+  idMoneda: number;
+
+  @ApiProperty({
+    description: 'ID del impuesto aplicado',
+    example: 2,
+    required: false,
+  })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  idImpuesto?: number;
 
   @ApiProperty({
     description: 'Fecha de la proforma',

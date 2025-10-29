@@ -1,5 +1,6 @@
 import { Compra } from 'src/compra/entities/compra.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
+import { Proforma } from 'src/proforma/entities/proforma.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -28,4 +29,7 @@ export class Impuesto {
 
   @OneToMany(() => Compra, (compra) => compra.impuesto)
   compras: Compra[];
+
+  @OneToMany(() => Proforma, (proforma) => proforma.impuesto)
+  proformas: Proforma[];
 }

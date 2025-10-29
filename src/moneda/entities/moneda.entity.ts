@@ -1,5 +1,6 @@
 import { Compra } from 'src/compra/entities/compra.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
+import { Proforma } from 'src/proforma/entities/proforma.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -16,6 +17,9 @@ export class Moneda {
   @Column({ name: 'activo', default: true })
   activo: boolean;
 
+  @Column({ name: 'simbolo', nullable: true })
+  simbolo: string;
+
   @Column({
     name: 'fecha_creacion',
     type: 'timestamp',
@@ -28,4 +32,7 @@ export class Moneda {
 
   @OneToMany(() => Compra, (compra) => compra.moneda)
   compras: Compra;
+
+  @OneToMany(() => Proforma, (proforma) => proforma.moneda)
+  proformas: Proforma[];
 }
