@@ -12,8 +12,9 @@ export class RecepcionSeguimiento {
   @PrimaryGeneratedColumn({ name: 'id_recepcion_seguimiento' })
   idRecepcionSeguimiento: number;
 
-  @Column({ name: 'id_recepcion' })
-  idRecepcion: number;
+  @ManyToOne(() => Recepcion, (recepcion) => recepcion.seguimientos)
+  @JoinColumn({ name: 'id_recepcion' })
+  recepcion: Recepcion;
 
   @Column({ name: 'fecha', type: 'timestamp' })
   fecha: Date;
@@ -23,12 +24,4 @@ export class RecepcionSeguimiento {
 
   @Column({ name: 'descripcion', nullable: true })
   descripcion: string;
-
-  @ManyToOne(() => Recepcion, (recepcion) => recepcion.seguimientos)
-  @JoinColumn({ name: 'id_recepcion' })
-  recepcion: Recepcion;
 }
-
-
-
-

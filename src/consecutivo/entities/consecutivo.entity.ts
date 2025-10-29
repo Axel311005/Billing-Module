@@ -1,5 +1,6 @@
 import { Compra } from 'src/compra/entities/compra.entity';
 import { Factura } from 'src/factura/entities/factura.entity';
+import { Proforma } from 'src/proforma/entities/proforma.entity';
 import {
   Column,
   CreateDateColumn,
@@ -49,4 +50,7 @@ export class Consecutivo {
 
   @OneToMany(() => Compra, (compra) => compra.consecutivo)
   compras: Compra[];
+
+  @OneToMany(() => Proforma, (proforma) => proforma.consecutivo)
+  proformas: Proforma[];
 }

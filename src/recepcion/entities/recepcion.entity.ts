@@ -15,11 +15,13 @@ export class Recepcion {
   @PrimaryGeneratedColumn({ name: 'id_recepcion' })
   idRecepcion: number;
 
-  @Column({ name: 'id_vehiculo' })
-  idVehiculo: number;
+  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.recepciones)
+  @JoinColumn({ name: 'id_vehiculo' })
+  vehiculo: Vehiculo;
 
-  @Column({ name: 'id_empleado' })
-  idEmpleado: number;
+  @ManyToOne(() => Empleado, (empleado) => empleado.recepciones)
+  @JoinColumn({ name: 'id_empleado' })
+  empleado: Empleado;
 
   @Column({ name: 'fecha_recepcion', type: 'timestamp' })
   fechaRecepcion: Date;
@@ -39,18 +41,9 @@ export class Recepcion {
   @Column({ name: 'fecha_entrega_real', type: 'timestamp', nullable: true })
   fechaEntregaReal: Date;
 
-  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.recepciones)
-  @JoinColumn({ name: 'id_vehiculo' })
-  vehiculo: Vehiculo;
-
-  @ManyToOne(() => Empleado, (empleado) => empleado.recepciones)
-  @JoinColumn({ name: 'id_empleado' })
-  empleado: Empleado;
-
-  @OneToMany(() => RecepcionSeguimiento, (recepcionSeguimiento) => recepcionSeguimiento.recepcion)
+  @OneToMany(
+    () => RecepcionSeguimiento,
+    (recepcionSeguimiento) => recepcionSeguimiento.recepcion,
+  )
   seguimientos: RecepcionSeguimiento[];
 }
-
-
-
-

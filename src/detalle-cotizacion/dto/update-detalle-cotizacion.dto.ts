@@ -6,3 +6,4 @@ export class UpdateDetalleCotizacionDto extends PartialType(CreateDetalleCotizac
 
 
 
+

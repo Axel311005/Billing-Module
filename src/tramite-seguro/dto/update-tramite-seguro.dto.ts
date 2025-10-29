@@ -6,3 +6,4 @@ export class UpdateTramiteSeguroDto extends PartialType(CreateTramiteSeguroDto) 
 
 
 
+

@@ -16,8 +16,9 @@ export class Vehiculo {
   @PrimaryGeneratedColumn({ name: 'id_vehiculo' })
   idVehiculo: number;
 
-  @Column({ name: 'id_cliente' })
-  idCliente: number;
+  @ManyToOne(() => Cliente, (cliente) => cliente.vehiculos)
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
   @Column({ name: 'placa' })
   placa: string;
@@ -47,10 +48,6 @@ export class Vehiculo {
   })
   fechaCreacion: Date;
 
-  @ManyToOne(() => Cliente, (cliente) => cliente.vehiculos)
-  @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente;
-
   @OneToMany(() => Cita, (cita) => cita.vehiculo)
   citas: Cita[];
 
@@ -60,4 +57,3 @@ export class Vehiculo {
   @OneToMany(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.vehiculo)
   tramitesSeguro: TramiteSeguro[];
 }
-

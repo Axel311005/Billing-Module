@@ -99,7 +99,16 @@ export class FacturaLineaService {
   }
 
   async update(id: number, updateFacturaLineaDto: UpdateFacturaLineaDto) {
-    const { facturaId, itemId, ...toUpdate } = updateFacturaLineaDto;
+    let {
+      facturaId,
+      itemId,
+      cantidad,
+      precioUnitario,
+      totalLinea,
+      ...toUpdate
+    } = updateFacturaLineaDto;
+
+    totalLinea = (cantidad ?? 0) * (precioUnitario ?? 0);
 
     const factura = await findEntityOrFail(
       this.facturaRepository,
@@ -115,6 +124,9 @@ export class FacturaLineaService {
     const linea = await this.facturaLineaRepository.preload({
       idFacturaLinea: id,
       ...toUpdate,
+      cantidad,
+      precioUnitario,
+      totalLinea,
       factura,
       item,
     });

@@ -6,3 +6,4 @@ export class UpdateRecepcionSeguimientoDto extends PartialType(CreateRecepcionSe
 
 
 
+

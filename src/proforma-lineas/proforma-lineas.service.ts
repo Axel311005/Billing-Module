@@ -6,70 +6,133 @@ import { Repository } from 'typeorm';
 import { ProformaLineas } from './entities/proforma-lineas.entity';
 import { handleDbException } from 'src/common/helpers/db-exception.helper';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { Proforma } from 'src/proforma/entities/proforma.entity';
+import { Item } from 'src/item/entities/item.entity';
+import { findEntityOrFail } from 'src/common/helpers/find-entity.helper';
 
 @Injectable()
 export class ProformaLineasService {
-
   private readonly logger = new Logger('ProformaLineasService');
 
   constructor(
     @InjectRepository(ProformaLineas)
-    private readonly proformaLineasRepository: Repository<ProformaLineas>
-  ){}
+    private readonly proformaLineasRepository: Repository<ProformaLineas>,
+    @InjectRepository(Proforma)
+    private readonly proformaRepository: Repository<Proforma>,
+    @InjectRepository(Item)
+    private readonly itemRepository: Repository<Item>,
+  ) {}
 
   async create(createProformaLineasDto: CreateProformaLineasDto) {
     try {
-      
-      const {...proformaLineas} = createProformaLineasDto;
+      const { idProforma, idItem, cantidad, precioUnitario, ...proformaLinea } =
+        createProformaLineasDto;
 
-      const nuevaProformaLineas = await this.proformaLineasRepository.create({...proformaLineas})
+      const proforma = await findEntityOrFail(
+        this.proformaRepository,
+        { idProforma },
+        'La proforma no fue encontrada o no existe',
+      );
+
+      const item = await findEntityOrFail(
+        this.itemRepository,
+        { idItem },
+        'El item no fue encontrado o no existe',
+      );
+
+      const cantidadValue = Number(cantidad);
+      const precioUnitarioValue = Number(precioUnitario);
+      const totalLinea = cantidadValue * precioUnitarioValue;
+
+      const nuevaProformaLineas = this.proformaLineasRepository.create({
+        ...proformaLinea,
+        cantidad: cantidadValue,
+        precioUnitario: precioUnitarioValue,
+        totalLinea,
+        proforma,
+        item,
+      });
 
       await this.proformaLineasRepository.save(nuevaProformaLineas);
-      return {...nuevaProformaLineas};
-
+      return await this.proformaLineasRepository.findOne({
+        where: { idProformaLineas: nuevaProformaLineas.idProformaLineas },
+        relations: ['proforma', 'item'],
+      });
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       handleDbException(error);
     }
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const {limit = 10, offset=0} = paginationDto
+    const { limit = 10, offset = 0 } = paginationDto;
     const proformaLineas = await this.proformaLineasRepository.find({
-      take:limit,
-      skip : offset,
-      relations: ['proforma', 'item']
-    })
+      take: limit,
+      skip: offset,
+      relations: ['proforma', 'item'],
+    });
 
     return proformaLineas;
   }
 
   async findOne(id: number) {
     const proformaLineas = await this.proformaLineasRepository.findOne({
-      where: {idProformaLineas : id},
-      relations: ['proforma', 'item']
+      where: { idProformaLineas: id },
+      relations: ['proforma', 'item'],
     });
 
     if (!proformaLineas) {
-      throw new NotFoundException(`La línea de proforma con id ${id} no fue encontrada`);
+      throw new NotFoundException(
+        `La línea de proforma con id ${id} no fue encontrada`,
+      );
     }
 
     return proformaLineas;
   }
 
   async update(id: number, updateProformaLineasDto: UpdateProformaLineasDto) {
-    const {...toUpdate} = updateProformaLineasDto;
+    let {
+      cantidad,
+      precioUnitario,
+      totalLinea,
+      idProforma,
+      idItem,
+      ...toUpdate
+    } = updateProformaLineasDto;
+
+    totalLinea = (cantidad ?? 0) * (precioUnitario ?? 0);
+
+    const proforma = await findEntityOrFail(
+      this.proformaRepository,
+      { idProforma },
+      'La proforma no fue encontrada o no existe',
+    );
+
+    const item = await findEntityOrFail(
+      this.itemRepository,
+      { idItem },
+      'El item no fue encontrado o no existe',
+    );
 
     const proformaLineas = await this.proformaLineasRepository.preload({
-      idProformaLineas : id, 
-      ...toUpdate
-    })
+      idProformaLineas: id,
+      proforma,
+      item,
+      cantidad,
+      precioUnitario,
+      totalLinea,
+      ...toUpdate,
+    });
 
     if (!proformaLineas) {
-      throw new NotFoundException(`La línea de proforma con id ${id} no fue encontrada`);
+      throw new NotFoundException(
+        `La línea de proforma con id ${id} no fue encontrada`,
+      );
     }
 
     return this.proformaLineasRepository.save(proformaLineas);
-
   }
 
   async remove(id: number) {
@@ -77,7 +140,3 @@ export class ProformaLineasService {
     await this.proformaLineasRepository.remove(proformaLineas!);
   }
 }
-
-
-
-

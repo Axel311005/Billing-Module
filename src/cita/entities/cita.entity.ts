@@ -11,17 +11,20 @@ import {
 
 @Entity()
 export class Cita {
-  @PrimaryGeneratedColumn('uuid', { name: 'unique_id' })
-  uniqueId: string;
+  @PrimaryGeneratedColumn({ name: 'id_cita' })
+  idCita: string;
 
-  @Column({ name: 'id_cliente' })
-  idCliente: number;
+  @ManyToOne(() => Cliente, (cliente) => cliente.citas)
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
-  @Column({ name: 'id_vehiculo' })
-  idVehiculo: number;
+  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.citas)
+  @JoinColumn({ name: 'id_vehiculo' })
+  vehiculo: Vehiculo;
 
-  @Column({ name: 'id_motivo_cita' })
-  idMotivoCita: number;
+  @ManyToOne(() => MotivoCita, (motivoCita) => motivoCita.citas)
+  @JoinColumn({ name: 'id_motivo_cita' })
+  motivoCita: MotivoCita;
 
   @Column({ name: 'fecha_inicio', type: 'timestamp' })
   fechaInicio: Date;
@@ -48,20 +51,4 @@ export class Cita {
     default: () => 'CURRENT_TIMESTAMP',
   })
   fechaActualizacion: Date;
-
-  @ManyToOne(() => Cliente, (cliente) => cliente.citas)
-  @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente;
-
-  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.citas)
-  @JoinColumn({ name: 'id_vehiculo' })
-  vehiculo: Vehiculo;
-
-  @ManyToOne(() => MotivoCita, (motivoCita) => motivoCita.citas)
-  @JoinColumn({ name: 'id_motivo_cita' })
-  motivoCita: MotivoCita;
 }
-
-
-
-

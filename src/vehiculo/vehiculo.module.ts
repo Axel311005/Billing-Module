@@ -3,14 +3,11 @@ import { VehiculoService } from './vehiculo.service';
 import { VehiculoController } from './vehiculo.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Vehiculo } from './entities/vehiculo.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Vehiculo])],
+  imports: [TypeOrmModule.forFeature([Vehiculo, Cliente])],
   controllers: [VehiculoController],
   providers: [VehiculoService],
 })
 export class VehiculoModule {}
-
-
-
-

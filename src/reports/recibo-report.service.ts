@@ -6,6 +6,7 @@ import {
   createFacturaReciboDocument,
   FacturaReciboData,
 } from './factura-recibo.report';
+import { createProformaDocument, ProformaReportData } from './proforma.report';
 
 @Injectable()
 export class ReciboReportService {
@@ -66,6 +67,44 @@ export class ReciboReportService {
   createFacturaReciboBuffer(data: FacturaReciboData): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const docDefinition = createFacturaReciboDocument(data);
+      const pdfDoc = this.printerService.createPdf(docDefinition);
+
+      const chunks: Buffer[] = [];
+
+      pdfDoc.on('data', (chunk: Buffer) => {
+        chunks.push(chunk);
+      });
+
+      pdfDoc.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+
+      pdfDoc.on('error', (error: Error) => {
+        reject(error);
+      });
+    });
+  }
+
+  async generateProformaPDF(
+    data: ProformaReportData,
+    response: Response,
+  ): Promise<void> {
+    const docDefinition = createProformaDocument(data);
+    const pdfDoc = this.printerService.createPdf(docDefinition);
+
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename="proforma-${data.numeroProforma}.pdf"`,
+    );
+    pdfDoc.info.Title = `Proforma ${data.numeroProforma}`;
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+  createProformaBuffer(data: ProformaReportData): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const docDefinition = createProformaDocument(data);
       const pdfDoc = this.printerService.createPdf(docDefinition);
 
       const chunks: Buffer[] = [];

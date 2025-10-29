@@ -27,9 +27,6 @@ export class Empleado {
   @Column({ name: 'telefono' })
   telefono: string;
 
-  @Column({ name: 'correo' })
-  correo: string;
-
   @Column({ name: 'direccion' })
   direccion: string;
 
@@ -39,9 +36,6 @@ export class Empleado {
     default: () => 'CURRENT_TIMESTAMP',
   })
   fecha_contratacion: Date;
-
-  @Column({ name: 'cargo' })
-  cargo: string;
 
   @Column({
     name: 'fecha_creacion',

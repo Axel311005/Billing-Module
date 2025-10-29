@@ -16,14 +16,17 @@ export class TramiteSeguro {
   @PrimaryGeneratedColumn({ name: 'id_tramite_seguro' })
   idTramiteSeguro: number;
 
-  @Column({ name: 'id_vehiculo' })
-  idVehiculo: number;
+  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.tramitesSeguro)
+  @JoinColumn({ name: 'id_vehiculo' })
+  vehiculo: Vehiculo;
 
-  @Column({ name: 'id_cliente' })
-  idCliente: number;
+  @ManyToOne(() => Cliente, (cliente) => cliente.tramitesSeguro)
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
-  @Column({ name: 'id_aseguradora' })
-  idAseguradora: number;
+  @ManyToOne(() => Aseguradora, (aseguradora) => aseguradora.tramitesSeguro)
+  @JoinColumn({ name: 'id_aseguradora' })
+  aseguradora: Aseguradora;
 
   @Column({ name: 'numero_tramite' })
   numeroTramite: string;
@@ -40,22 +43,6 @@ export class TramiteSeguro {
   @Column({ name: 'observaciones', nullable: true })
   observaciones: string;
 
-  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.tramitesSeguro)
-  @JoinColumn({ name: 'id_vehiculo' })
-  vehiculo: Vehiculo;
-
-  @ManyToOne(() => Cliente, (cliente) => cliente.tramitesSeguro)
-  @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente;
-
-  @ManyToOne(() => Aseguradora, (aseguradora) => aseguradora.tramitesSeguro)
-  @JoinColumn({ name: 'id_aseguradora' })
-  aseguradora: Aseguradora;
-
   @OneToMany(() => Proforma, (proforma) => proforma.tramiteSeguro)
   proformas: Proforma[];
 }
-
-
-
-

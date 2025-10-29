@@ -8,19 +8,29 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
+import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 
 @Entity()
 export class Proforma {
   @PrimaryGeneratedColumn({ name: 'id_proforma' })
   idProforma: number;
 
-  @Column({ name: 'id_tramite_seguro' })
-  idTramiteSeguro: number;
+  @ManyToOne(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.proformas)
+  @JoinColumn({ name: 'id_tramite_seguro' })
+  tramiteSeguro: TramiteSeguro;
 
-  @Column({ name: 'id_seguro', nullable: true })
-  idSeguro: number;
+  @ManyToOne(() => Consecutivo, (consecutivo) => consecutivo.proformas)
+  @JoinColumn({ name: 'id_consecutivo' })
+  consecutivo: Consecutivo;
 
-  @Column({ name: 'fecha', type: 'timestamp' })
+  @Column({ name: 'codigo_proforma', nullable: true })
+  codigoProforma: string;
+
+  @Column({
+    name: 'fecha',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   fecha: Date;
 
   // @Column({ name: 'estado', default: 'pendiente' })
@@ -29,16 +39,15 @@ export class Proforma {
   @Column({ name: 'observaciones', nullable: true })
   observaciones: string;
 
-  @Column('decimal', { name: 'total_estimado', precision: 10, scale: 2, nullable: true, default: 0 })
+  @Column('decimal', {
+    name: 'total_estimado',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+    default: 0,
+  })
   totalEstimado?: number;
-
-  @ManyToOne(() => TramiteSeguro, (tramiteSeguro) => tramiteSeguro.proformas)
-  @JoinColumn({ name: 'id_tramite_seguro' })
-  tramiteSeguro: TramiteSeguro;
 
   @OneToMany(() => ProformaLineas, (proformaLineas) => proformaLineas.proforma)
   lineas: ProformaLineas[];
 }
-
-
-

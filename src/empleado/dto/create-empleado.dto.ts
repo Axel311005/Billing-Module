@@ -31,12 +31,12 @@ export class CreateEmpleadoDto {
   @MinLength(8)
   telefono: string;
 
-  @ApiProperty({
-    description: 'Correo electrónico del empleado',
-    example: 'empleado@empresa.com',
-  })
-  @IsEmail()
-  correo: string;
+  // @ApiProperty({
+  //   description: 'Correo electrónico del empleado',
+  //   example: 'empleado@empresa.com',
+  // })
+  // @IsEmail()
+  // correo: string;
 
   @ApiProperty({
     description: 'Dirección física',
@@ -47,13 +47,13 @@ export class CreateEmpleadoDto {
   @IsOptional()
   direccion?: string;
 
-  @ApiProperty({
-    description: 'Cargo o puesto del empleado',
-    example: 'Vendedor',
-  })
-  @IsString()
-  @MinLength(2)
-  cargo: string;
+  // @ApiProperty({
+  //   description: 'Cargo o puesto del empleado',
+  //   example: 'Vendedor',
+  // })
+  // @IsString()
+  // @MinLength(2)
+  // cargo: string;
 
   @ApiProperty({
     description: 'Indica si el empleado está activo',

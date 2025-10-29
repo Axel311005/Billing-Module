@@ -6,3 +6,4 @@ export class UpdateAseguradoraDto extends PartialType(CreateAseguradoraDto) {}
 
 
 
+
