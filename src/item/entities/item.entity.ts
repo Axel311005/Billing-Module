@@ -52,19 +52,19 @@ export class Item {
   esCotizable: boolean;
 
   @Column({ name: 'ultima_salida', type: 'timestamp', nullable: true })
-  ultimaSalida: Date;
+  ultimaSalida?: Date;
 
   @Column({ name: 'ultimo_ingreso', type: 'timestamp', nullable: true })
-  ultimoIngreso: Date;
+  ultimoIngreso?: Date;
 
   @Column({ name: 'usuario_ult_modif', nullable: true })
-  usuarioUltModif: string;
+  usuarioUltModif?: string;
 
   @Column({ name: 'fecha_ult_modif', type: 'timestamp', nullable: true })
-  fechaUltModif: Date;
+  fechaUltModif?: Date;
 
   @Column({ name: 'perecedero', default: false })
-  perecedero: boolean;
+  perecedero?: boolean;
 
   @Column({
     name: 'fecha_creacion',
@@ -88,6 +88,9 @@ export class Item {
   @OneToMany(() => ProformaLineas, (proformaLineas) => proformaLineas.item)
   proformaLineas: ProformaLineas[];
 
-  @OneToMany(() => DetalleCotizacion, (detalleCotizacion) => detalleCotizacion.item)
+  @OneToMany(
+    () => DetalleCotizacion,
+    (detalleCotizacion) => detalleCotizacion.item,
+  )
   detalleCotizaciones: DetalleCotizacion[];
 }
