@@ -7,6 +7,8 @@ import {
   IsPositive,
   Min,
   IsInt,
+  IsBoolean,
+  IsDateString,
 } from 'class-validator';
 
 export class CreateFacturaDto {
@@ -129,4 +131,22 @@ export class CreateFacturaDto {
   @IsString()
   @IsOptional()
   comentario?: string;
+
+  @ApiProperty({
+    description: 'Indica si la factura está anulada',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  anulada?: boolean;
+
+  @ApiProperty({
+    description: 'Fecha de anulación',
+    example: '2025-10-29T07:10:00Z',
+    required: false,
+  })
+  @IsOptional()
+  @IsDateString()
+  fechaAnulacion?: string;
 }
