@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +14,7 @@ import { Bodega } from 'src/bodega/entities/bodega.entity';
 import { Consecutivo } from 'src/consecutivo/entities/consecutivo.entity';
 import { ConsecutivoService } from 'src/consecutivo/consecutivo.service';
 import { Empleado } from 'src/empleado/entities/empleado.entity';
+import { CompraFilterDto, CompraSortBy } from './dto/CompraFilter.dto';
 
 @Injectable()
 export class CompraService {
@@ -203,5 +204,100 @@ export class CompraService {
   async remove(id: number) {
     const compra = await this.findOne(id);
     await this.compraRepository.remove(compra!);
+  }
+
+  async advancedSearch(dto: CompraFilterDto) {
+    const {
+      bodegaNombre,
+      empleadoNombre,
+      tipo_pago,
+      moneda,
+      id_bodega,
+      id_empleado,
+      id_tipo_pago,
+      id_moneda,
+      codigo_compra,
+      codigoLike,
+      estado,
+      anulado,
+      dateFrom,
+      dateTo,
+      minTotal,
+      maxTotal,
+      page = 1,
+      limit = 10,
+      sortBy = CompraSortBy.FECHA,
+      sortDir = 'DESC',
+    } = dto;
+
+    const qb = this.compraRepository
+      .createQueryBuilder('co')
+      .leftJoinAndSelect('co.bodega', 'b')
+      .leftJoinAndSelect('co.empleado', 'e')
+      .leftJoinAndSelect('co.moneda', 'm')
+      .leftJoinAndSelect('co.tipoPago', 'tp');
+
+    if (bodegaNombre)
+      qb.andWhere('b.descripcion ILIKE :bNom', { bNom: `%${bodegaNombre}%` });
+    if (empleadoNombre)
+      qb.andWhere(
+        '(e.primer_nombre ILIKE :eNom OR e.primer_apellido ILIKE :eNom)',
+        { eNom: `%${empleadoNombre}%` },
+      );
+    if (moneda)
+      qb.andWhere('m.descripcion ILIKE :mNom', { mNom: `%${moneda}%` });
+    if (tipo_pago)
+      qb.andWhere('tp.descripcion ILIKE :tpNom', { tpNom: `%${tipo_pago}%` });
+
+    if (id_bodega) qb.andWhere('b.id_bodega = :idb', { idb: id_bodega });
+    if (id_empleado) qb.andWhere('e.id_empleado = :ide', { ide: id_empleado });
+    if (id_moneda) qb.andWhere('m.id_moneda = :idm', { idm: id_moneda });
+    if (id_tipo_pago)
+      qb.andWhere('tp.id_tipo_pago = :idtp', { idtp: id_tipo_pago });
+
+    if (codigo_compra)
+      qb.andWhere('co.codigo_compra = :cod', { cod: codigo_compra });
+    if (codigoLike)
+      qb.andWhere('co.codigo_compra ILIKE :codLike', {
+        codLike: `%${codigoLike}%`,
+      });
+
+    if (estado) qb.andWhere('co.estado = :est', { est: estado });
+    if (anulado !== undefined)
+      qb.andWhere('co.anulado = :anu', { anu: anulado });
+
+    if (dateFrom) qb.andWhere('co.fecha >= :df', { df: dateFrom });
+    if (dateTo) qb.andWhere('co.fecha <= :dt', { dt: dateTo });
+
+    if (minTotal)
+      qb.andWhere('CAST(co.total AS NUMERIC) >= :minT', { minT: minTotal });
+    if (maxTotal)
+      qb.andWhere('CAST(co.total AS NUMERIC) <= :maxT', { maxT: maxTotal });
+
+    const sortMap: Record<CompraSortBy, string> = {
+      [CompraSortBy.FECHA]: 'co.fecha',
+      [CompraSortBy.TOTAL]: 'co.total',
+      [CompraSortBy.CODIGO]: 'co.codigo_compra',
+      [CompraSortBy.BODEGA]: 'b.descripcion',
+      [CompraSortBy.EMPLEADO]: 'e.primer_nombre',
+      [CompraSortBy.TIPO_PAGO]: 'tp.descripcion',
+      [CompraSortBy.MONEDA]: 'm.descripcion',
+    };
+
+    qb.orderBy(sortMap[sortBy] ?? 'co.fecha', sortDir as 'ASC' | 'DESC');
+
+    qb.take(limit).skip((page - 1) * limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
