@@ -7,6 +7,10 @@ import {
   FacturaReciboData,
 } from './factura-recibo.report';
 import { createProformaDocument, ProformaReportData } from './proforma.report';
+import {
+  createInventoryStockDocument,
+  InventoryStockReportData,
+} from './inventory-stock.report';
 
 @Injectable()
 export class ReciboReportService {
@@ -121,5 +125,52 @@ export class ReciboReportService {
         reject(error);
       });
     });
+  }
+
+  async generateInventoryStockPDF(
+    data: InventoryStockReportData,
+    response: Response,
+  ): Promise<void> {
+    const docDefinition = createInventoryStockDocument(data);
+    const pdfDoc = this.printerService.createPdf(docDefinition);
+
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename="inventario-${this.buildFilenameSuffix(data)}.pdf"`,
+    );
+    pdfDoc.info.Title = data.titulo ?? 'Reporte de existencias';
+    pdfDoc.pipe(response);
+    pdfDoc.end();
+  }
+
+  createInventoryStockBuffer(data: InventoryStockReportData): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const docDefinition = createInventoryStockDocument(data);
+      const pdfDoc = this.printerService.createPdf(docDefinition);
+
+      const chunks: Buffer[] = [];
+
+      pdfDoc.on('data', (chunk: Buffer) => {
+        chunks.push(chunk);
+      });
+
+      pdfDoc.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+
+      pdfDoc.on('error', (error: Error) => {
+        reject(error);
+      });
+    });
+  }
+
+  private buildFilenameSuffix(data: InventoryStockReportData): string {
+    const base = data.titulo ?? 'existencias';
+    return base
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .concat(`-${Date.now()}`);
   }
 }
